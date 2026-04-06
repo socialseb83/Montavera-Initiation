@@ -8,17 +8,17 @@
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
+        /* COVER LAYERS */
         .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; }
-        
-        /* Fixed Image Layers */
         .cover-img { position: absolute; top: 0; left: 0; width: 100%; height: 80%; background-size: contain; background-repeat: no-repeat; background-position: center top; z-index: 110; pointer-events: none; }
 
         #splash { display: flex; }
         #back-cover { display: none; z-index: 200; }
 
-        .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 8px 0; }
+        .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 6px 0; }
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
 
+        /* GAMEPLAY UI */
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
         #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 100px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
@@ -55,24 +55,21 @@
         start: { 
             img: 'print_2_play.png', 
             msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck of Factions: Montavera.", 
-            choices: [
-                { h: "Cut the cards with surgical precision", n: 'watch' },
-                { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }
-            ] 
+            choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] 
         },
         watch: { 
             img: 'watch_others_play.png', 
             msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", 
-            choices: [{ h: "Ask for a practice match", n: 'online' }, { h: "Just watch and learn the meta", n: 'online' }] 
+            choices: [{ h: "Ask for a practice match", n: 'online' }] 
         },
         online: { 
             img: 'play_online.png', 
-            msg: "Your first online match. The screen glows. Confidence shift detected. You win!", 
+            msg: "Your first online match. You win! Confidence shift detected.", 
             choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] 
         },
         gates: { 
             img: 'entering_montavera.png', 
-            msg: "The bedroom walls fade. You stand before the city gates. You are no longer just a player. You are a Citizen.", 
+            msg: "The bedroom walls fade. You stand before the city gates. You are now a Citizen.", 
             choices: [{ h: "Step into the fog", n: 'encounter' }] 
         },
         encounter: { 
@@ -90,12 +87,12 @@
         },
         win_mojo: { 
             img: 'the_turning_tide.png', 
-            msg: "The MOJO surge is overwhelming! You overpower their defenses and secure the win.", 
+            msg: "The MOJO surge is overwhelming! You overpower their defenses with raw energy and secure the win.", 
             choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
         },
         win_plot: { 
             img: 'the_turning_tide.png', 
-            msg: "You found the loophole! Your Plot Twist unravels their strategy in a single turn.", 
+            msg: "Loophole found! Your Plot Twist unravels their strategy in a single bureaucratic masterstroke.", 
             choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
         },
         ready: { 
