@@ -13,14 +13,11 @@
         #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 20px; }
         .btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s; }
         .btn:hover { background: rgba(123, 44, 191, 0.3); color: #fff; border-color: var(--t); }
-        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
 
-<audio id="bgm" loop src="welcome_to_montavera.mp3"></audio>
-<audio id="sfx" src="glitch_sound.mp3"></audio>
+<audio id="bgm" loop src="https://raw.githubusercontent.com/socialseb83/Montavera-Initiation/main/welcome_to_montavera.mp3"></audio>
 
 <div id="game">
     <div id="art"></div>
@@ -34,9 +31,7 @@
     const txt = document.getElementById('txt');
     const btns = document.getElementById('btns');
     const bgm = document.getElementById('bgm');
-    const sfx = document.getElementById('sfx');
 
-    // Set initial volume
     bgm.volume = 0.5;
 
     const story = {
@@ -51,16 +46,16 @@
         fail: { img: 'failed_block.png', msg: "ERROR. You try to block with a Producer, but it has no combat stats. The Enforcer walks right through you. Your Seat is smoking.", choices: [{ h: "Seek a deal", n: 'deal' }] },
         bribe: { img: 'the_bribe.png', msg: "Gold talks. The Enforcer steps aside. Now, roll for Initiative to strike first!", choices: [{ h: "[ROLL D6]", n: 'init' }] },
         deal: { img: 'the_corrupt_deal.png', msg: "The Collector leans in. 'I'll call off the strike, kid. Just hand over control of your Agent. Sign here.'", choices: [{ h: "Refuse (Take the damage)", n: 'near_loss' }, { h: "Accept (Lose your unit)", n: 'near_loss' }] },
-        init: { img: 'initiative.png', msg: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!", action: () => { sfx.play(); document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); }, choices: [{ h: "Turn the Tide!", n: 'win' }] },
+        init: { img: 'initiative.png', msg: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!", action: () => { document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); }, choices: [{ h: "Turn the Tide!", n: 'win' }] },
         near_loss: { img: 'the_near_loss.png', msg: "Everything is fading. The Collector is preparing the final paperwork to end your existence.\n\nWait—the hidden Plot Twist!", choices: [{ h: "FLIP IT!", n: 'win' }] },
         win: { img: 'the_turning_tide.png', msg: "SUCCESS. Your Plot Twist finds a loophole in reality. The Enforcer is deleted. You have survived the initiation.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
         ready: { img: 'ready_for_more.png', msg: "You're ready, Montavera! The city is yours to conquer. Report to the Council.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
     };
 
     function render(k) {
-        // Trigger audio playback on the first interaction
+        // This is the trigger: Audio starts on the very first button click
         if (bgm.paused) {
-            bgm.play().catch(e => console.log("Audio waiting for user click."));
+            bgm.play().catch(e => console.log("Audio waiting for first click. Check Mute Switch!"));
         }
         
         if (k === 'exit') { window.location.href = DISCORD; return; }
