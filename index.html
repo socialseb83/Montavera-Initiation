@@ -1,214 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montavera Initiation Protocol</title>
-    <style>
-        :root {
-            --neon-purple: #7B2CBF;
-            --void-black: #0D1B2A;
-            --bureau-beige: #E0E1DD;
-            --mojo-green: #00FF9F;
-        }
-
-        body {
-            background-color: var(--void-black);
-            color: var(--bureau-beige);
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        /* CRT Scanline / Anomaly Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
-
-        #game-container {
-            width: 90%;
-            max-width: 450px;
-            border: 1px solid var(--neon-purple);
-            padding: 20px;
-            background: rgba(13, 27, 42, 0.95);
-            box-shadow: 0 0 15px rgba(123, 44, 191, 0.3);
-            position: relative;
-            z-index: 5;
-        }
-
-        #art-box {
-            width: 100%;
-            height: 220px;
-            background-size: cover;
-            background-position: center;
-            border: 1px solid var(--neon-purple);
-            margin-bottom: 15px;
-            background-color: #000;
-        }
-
-        #stats-bar {
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(224, 225, 221, 0.2);
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #terminal-text {
-            min-height: 120px;
-            line-height: 1.4;
-            /* FIX FOR THE SPACING BUG */
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: transparent;
-            border: 1px solid var(--neon-purple);
-            color: var(--bureau-beige);
-            font-family: 'Courier New', Courier, monospace;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: rgba(123, 44, 191, 0.2);
-            border-color: var(--bureau-beige);
-        }
-
-        #mojo-val { color: var(--mojo-green); text-shadow: 0 0 5px var(--mojo-green); }
-
-        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-    </style>
-</head>
-<body>
-
-<div id="game-container">
-    <div id="art-box"></div>
-    <div id="stats-bar">
-        <span>MOJO: <span id="mojo-val">0</span></span>
-        <span>INCIDENT: #2026-04-05</span>
-    </div>
-    <div id="terminal-text"></div>
-    <div id="options-zone"></div>
-</div>
-
-<script>
-    // --- CONFIGURATION ---
-    // Change 'image.png' to the exact name of the file in your GitHub folder
-    const MY_IMAGE_NAME = 'start.png'; 
-    const DISCORD_LINK = 'YOUR_DISCORD_RULES_LINK';
-
-    let mojo = 0;
-    const terminal = document.getElementById('terminal-text');
-    const options = document.getElementById('options-zone');
-    const artBox = document.getElementById('art-box');
-
-    // Set Initial Image
-    artBox.style.backgroundImage = `url('${MY_IMAGE_NAME}')`;
-
-    const story = {
-        start: {
-            text: "CITIZEN. Your presence has been registered. You are currently standing in a gravitational anomaly with 0 MOJO. This is a violation of local reality ordinances.\n\nThe Collector is approaching. He doesn't want your soul—he wants your Seat. What is your opening move?",
-            choices: [
-                { text: "Burn 'Annihilator Bae' for 5 MOJO", next: 'burn' }
-            ]
-        },
-        burn: {
-            text: "RESOURCES ACQUIRED. You have sacrificed potential for power. \n\nThe Collector deploys 'The Enforcer' to your Frontline. He's blocking your path to victory. He looks like he enjoys paperwork and violence in equal measure.",
-            action: () => { updateMojo(5); },
-            choices: [
-                { text: "Bribe The Enforcer (Cost: 3 MOJO)", next: 'bribe' }
-            ]
-        },
-        bribe: {
-            text: "TRANSACTION COMPLETE. The Enforcer has realized his loyalty is flexible. He is now your Agent.\n\nGravity is shifting. It's time to see who strikes first. Roll for Initiative.",
-            action: () => { updateMojo(-3); },
-            choices: [
-                { text: "[ROLL INITIATIVE D6]", next: 'combat' }
-            ]
-        },
-        combat: {
-            text: "CRITICAL SUCCESS. You rolled a 6. The Collector rolled a 1. He is stunned by your administrative efficiency.\n\nHe attempts to Redact your Agent! Quick—counter it.",
-            action: () => { document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); },
-            choices: [
-                { text: "Play Plot Twist: 'Bureaucratic Error'", next: 'win' }
-            ]
-        },
-        win: {
-            text: "ERROR 404: ENEMY NOT FOUND. Your Plot Twist has invalidated The Collector's existence. The Seat is vacant.\n\nYou have survived the initiation. Report to the High Council for your final briefing.",
-            choices: [
-                { text: "CLAIM SEAT & ENTER DISCORD", next: 'exit' }
-            ]
-        }
-    };
-
-    function typeWriter(text, callback) {
-        terminal.innerText = '';
-        let i = 0;
-        const interval = setInterval(() => {
-            terminal.innerText += text.charAt(i);
-            i++;
-            if (i >= text.length) {
-                clearInterval(interval);
-                callback();
-            }
-        }, 25);
-    }
-
-    function renderScene(key) {
-        if (key === 'exit') {
-            window.location.href = DISCORD_LINK;
-            return;
-        }
-        const scene = story[key];
-        options.innerHTML = '';
-        
-        if (scene.action) scene.action();
-        
-        typeWriter(scene.text, () => {
-            scene.choices.forEach(c => {
-                const b = document.createElement('button');
-                b.className = 'btn';
-                b.innerText = `> ${c.text}`;
-                b.onclick = () => renderScene(c.next);
-                options.appendChild(b);
-            });
-        });
-    }
-
-    function updateMojo(amt) {
-        mojo += amt;
-        document.getElementById('mojo-val').innerText = mojo;
-    }
-
-    // Initialize
-    renderScene('start');
-</script>
-</body>
-</html>
+const story = {
+    start: {
+        image: 'boss_play.png', 
+        text: "You start strong. You slam 'Annhialator Bae' onto the table. The MOJO hums. You feel like a god.\n\nTHE VETERAN: 'Bold. But in Montavera, gods are just tax brackets.'",
+        choices: [
+            { text: "Attack the Collector's Frontline", next: 'counter_move' },
+            { text: "Build up your Backline", next: 'counter_move' }
+        ]
+    },
+    counter_move: {
+        image: 'enforcer_appears.png',
+        text: "The Collector doesn't blink. He plays 'The Enforcer.' It's a Level 5 Agent with a 'Lethal' keyword. Your Bae looks suddenly... fragile.\n\nHe moves to strike your Seat directly!",
+        choices: [
+            { text: "Try to Block with your Producer", next: 'block_fail' },
+            { text: "Take the hit (Lose 4 HP)", next: 'damaged_seat' }
+        ]
+    },
+    block_fail: {
+        image: 'block_failure.png',
+        text: "ERROR. You try to block, but your card is a Producer, not an Agent. It has no combat stats. The Enforcer walks right through your defense like it's a ghost.\n\nYour Seat is wide open.",
+        choices: [
+            { text: "Accept the inevitable", next: 'the_deal' }
+        ]
+    },
+    the_deal: {
+        image: 'corrupt_deal.png',
+        text: "The Collector stops. He leans in. 'I'll call off the strike, kid. But only if you sign over control of your Agent to me. A simple bribe of souls.'",
+        choices: [
+            { text: "Refuse the Deal (Risk it all)", next: 'near_loss' },
+            { text: "Accept the Bribe (Lose your unit)", next: 'near_loss' } 
+        ]
+    },
+    near_loss: {
+        image: 'near_loss.png',
+        text: "Everything is falling apart. Your MOJO is 0. Your Seat is smoking. The Collector is preparing his final signature to redact you from reality.\n\nWait... what's that in 'The Plot' zone?",
+        choices: [
+            { text: "Flip the hidden Plot Twist", next: 'win' }
+        ]
+    },
+    // ... win scene leads to victory.png
+};
