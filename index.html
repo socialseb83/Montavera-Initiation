@@ -6,16 +6,47 @@
     <title>FACTIONS: MONTAVERA</title>
     <style>
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
-        body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-y: auto; position: relative; }
+        
+        body { 
+            background: var(--b); 
+            color: var(--t); 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            position: relative; 
+        }
         
         /* CRT Scanline Overlay */
         body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 10; background-size: 100% 3px, 3px 100%; pointer-events: none; }
 
         /* THE COMIC BOOK COVER PAGE */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); background-image: url('cover_1.jpg'); background-size: cover; background-position: center; z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; }
-        
+        #splash { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: var(--b); 
+            /* FIXED: Now looking for .png */
+            background-image: url('cover_1.png'); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 100; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            align-items: center; 
+            text-align: center; 
+            padding-bottom: 60px; 
+        }
+
         /* Main Game Container */
-        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); display: none; position: relative; z-index: 20; margin-bottom: 40px; }
+        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); display: none; position: relative; z-index: 20; }
         
         #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease-in-out; }
         #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 20px; }
@@ -23,19 +54,27 @@
         .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; transition: 0.2s; }
         .btn:hover { background: rgba(123, 44, 191, 0.3); color: #fff; border-color: var(--t); }
         
-        #boot-btn { border-color: var(--y); color: var(--y); text-align: center; max-width: 240px; background: rgba(0,0,0,0.7); font-weight: bold; font-size: 1.1rem; box-shadow: 0 0 15px rgba(255, 214, 10, 0.4); }
-        #boot-btn:hover { border-color: var(--b); color: var(--b); background: var(--y); }
-        .hint { font-size: 10px; color: #aaa; margin-top: 10px; font-style: italic; background:rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; }
-        
-        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        #boot-btn { 
+            border: 2px solid var(--y); 
+            color: var(--y); 
+            text-align: center; 
+            width: 280px; 
+            background: rgba(0,0,0,0.85); 
+            font-weight: bold; 
+            font-size: 1.2rem; 
+            letter-spacing: 2px;
+            box-shadow: 0 0 25px rgba(255, 214, 10, 0.6);
+            margin-bottom: 10px;
+        }
+        #boot-btn:hover { background: var(--y); color: var(--b); }
+        .hint { font-size: 10px; color: #fff; margin-top: 5px; font-style: italic; background:rgba(0,0,0,0.8); padding: 4px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
 <div id="splash">
     <button id="boot-btn" class="btn" onclick="bootSystem()">AUTHORIZE ACCESS</button>
-    <p class="hint">(Ensure silent switch is OFF for audio)</p>
+    <div class="hint">Ensure volume is up and silent switch is OFF</div>
 </div>
 
 <audio id="bgm" loop preload="auto">
@@ -60,73 +99,29 @@
     bgm.volume = 0.5;
 
     function bootSystem() {
-        bgm.play().then(() => {
-            console.log("Audio Stream Active.");
-        }).catch(e => {
-            console.log("Audio blocked. Waiting for interaction.");
-        });
-        
+        bgm.play().catch(e => console.log("Audio waiting for user interaction."));
         splash.style.display = 'none';
         game.style.display = 'block';
         render('start');
     }
 
     const story = {
-        start: { 
-            img: 'print_2_play.png', 
-            msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", 
-            choices: [
-                { h: "Cut the cards with surgical precision", n: 'watch' },
-                { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }
-            ] 
-        },
-        watch: { 
-            img: 'watch_others_play.png', 
-            msg: "You jump onto the Discord. You watch the veterans move Agents and trigger Plot Twists like they're filing tax returns in a hurricane.", 
-            choices: [{ h: "Ask for a practice match", n: 'online' }] 
-        },
-        online: { 
-            img: 'play_online.png', 
-            msg: "Your first online match. The screen glows. The MOJO flows. You win!", 
-            choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] 
-        },
-        gates: { 
-            img: 'entering_montavera.png', 
-            msg: "The bedroom walls fade. You stand before the city gates. You are no longer just a player. You are a Citizen.", 
-            choices: [{ h: "Step into the fog", n: 'encounter' }] 
-        },
-        encounter: { 
-            img: 'start.png', 
-            msg: "You are not ready.\n\nBut that has never stopped anyone in Montavera.\n\n—\n\nSomeone is approaching. Not a simulation. Face them.", 
-            choices: [{ h: "Step forward and face them", n: 'boss' }] 
-        },
-        boss: {
-            img: 'the_boss.png',
-            msg: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match begins.",
-            choices: [{ h: "Burn for MOJO (+5)", n: 'win' }]
-        },
-        win: { 
-            img: 'the_turning_tide.png', 
-            msg: "SUCCESS. Your Plot Twist finds a loophole in reality. You have survived the initiation.", 
-            choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
-        },
-        ready: { 
-            img: 'ready_for_more.png', 
-            msg: "You're ready, Montavera! Report to the Council for your final credentials.", 
-            choices: [{ h: "ENTER DISCORD", n: 'exit' }] 
-        }
+        start: { img: 'print_2_play.png', msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] },
+        watch: { img: 'watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents and trigger Plot Twists like they're filing tax returns in a hurricane.", choices: [{ h: "Ask for a practice match", n: 'online' }] },
+        online: { img: 'play_online.png', msg: "Your first online match. The screen glows. The MOJO flows. You win your first game and the confidence feels like a gravitational shift.", choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] },
+        gates: { img: 'entering_montavera.png', msg: "The bedroom walls fade. The air smells like burnt paper and ozone. You stand before the city gates. You are no longer just a player. You are a Citizen.", choices: [{ h: "Step into the fog", n: 'encounter' }] },
+        encounter: { img: 'start.png', msg: "You are not ready.\n\nBut that has never stopped anyone in Montavera.\n\n—\n\nSomeone is approaching. Not a simulation. Face them.", choices: [{ h: "Step forward and face them", n: 'boss' }] },
+        boss: { img: 'the_boss.png', msg: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match begins.", choices: [{ h: "Burn for MOJO (+5)", n: 'win' }] },
+        win: { img: 'the_turning_tide.png', msg: "SUCCESS. Your Plot Twist finds a loophole in reality. You have survived the initiation.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
+        ready: { img: 'ready_for_more.png', msg: "You're ready, Montavera! Report to the Council for your final credentials.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
     };
 
     function render(k) {
-        if (bgm.paused && k !== 'exit') {
-            bgm.play().catch(() => {});
-        }
-        
+        if (bgm.paused && k !== 'exit') { bgm.play().catch(() => {}); }
         if (k === 'exit') { window.location.href = DISCORD; return; }
         const s = story[k];
         btns.innerHTML = '';
         art.style.backgroundImage = `url('${s.img}')`;
-        
         txt.innerText = '';
         let i = 0;
         const timer = setInterval(() => {
