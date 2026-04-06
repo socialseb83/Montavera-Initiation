@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FACTIONS: MONTAVERA</title>
     <style>
-        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; --r: #FF4D4D; }
+        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
         .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; background-repeat: no-repeat; background-position: center top; background-size: contain; }
@@ -19,20 +19,19 @@
         #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 120px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
         .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 13px; }
-        .choice-btn:hover { background: rgba(123, 44, 191, 0.3); }
     </style>
 </head>
 <body>
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Protocol initialized. Check volume.</div>
+    <div class="hint">Check volume. Protocol: MONTAVERA.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">TILL NEXT TIME...</button>
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">OR LAST TIME...</button>
-    <div class="hint">The match is over. The Bureaucracy is forever.</div>
+    <div class="hint">The contract is signed.</div>
 </div>
 
 <audio id="bgm" loop preload="auto">
@@ -48,74 +47,69 @@
 <script>
     const story = {
         start: { 
-            img: 'print_2_play.png', 
-            msg: "The cards are fresh off the printer. You feel the weight of Montavera in your hands. How do you begin?", 
-            choices: [{ h: "Roll for Initiative", n: 'initiative' }] 
-        },
-        initiative: {
-            img: 'initiative.jpg',
-            msg: "The golden dice tumble. The Collector watches with a hungry grin. You've won the lead!",
-            choices: [{ h: "Step into the city", n: 'gates' }]
+            img: 'initiative.png', 
+            msg: "The golden dice roll across the table. Initiative is yours. The contest begins.", 
+            choices: [{ h: "Enter the Contested Realm", n: 'gates' }] 
         },
         gates: { 
             img: 'entering_montavera.png', 
-            msg: "The fog of the city swallows you. Shadows move in the alleyways. A figure steps out.", 
+            msg: "You stand before the gates. Shadows leer from every corner. A collector offers a shortcut.", 
             choices: [
-                { h: "Prepare for combat", n: 'encounter' },
-                { h: "Offer a Bribe", n: 'bribe' }
+                { h: "Face the Shadow Enforcer", n: 'enforcer' },
+                { h: "Offer a Bribe (5 MOJO)", n: 'bribe' }
             ] 
         },
         bribe: {
-            img: 'the bribe.jpg',
-            msg: "You slide a pouch of glowing MOJO across the cobbles. The figure pauses. Bureaucracy loves a gift.",
-            choices: [{ h: "Request safe passage", n: 'deal' }]
+            img: 'the_bribe.png',
+            msg: "You slide the bag over. The monster grins. A deal is struck.",
+            choices: [{ h: "Claim your corrupt reward", n: 'deal' }]
         },
         deal: {
-            img: 'the_corrupt_deal.jpg',
-            msg: "The Collector leans in. 'A wise Citizen. Take this Agent. You'll need him for what's coming.'",
-            choices: [{ h: "Face the Boss", n: 'boss' }]
+            img: 'the_corrupt_deal.png',
+            msg: "He hands you a high-tier Agent. 'For the final paperwork,' he whispers.",
+            choices: [{ h: "Confront the Headmaster", n: 'boss' }]
         },
-        encounter: { 
-            img: 'the_enforcer.jpg', 
-            msg: "A Shadow Enforcer blocks your path! 'Credentials,' he hisses. You have none.", 
-            choices: [{ h: "Defend yourself!", n: 'block' }] 
+        enforcer: {
+            img: 'the_enforcer.png',
+            msg: "The Enforcer lunges! You have no credentials. You must defend your position.",
+            choices: [{ h: "Block with a Defender", n: 'failed_block' }]
         },
-        block: {
-            img: 'failed_block.jpg',
-            msg: "You play a Defender, but the Enforcer's darkness is too pure. Your block fails!",
-            choices: [{ h: "Desperation move...", n: 'boss' }]
+        failed_block: {
+            img: 'failed_block.png',
+            msg: "Your Defender is shattered! The Enforcer breaks through. You're bleeding MOJO.",
+            choices: [{ h: "Desperate Counter-Attack", n: 'boss' }]
         },
         boss: { 
             img: 'the_boss.png', 
-            msg: "The Headmaster arrives. The stakes are monsters. You are at your limit.", 
+            msg: "The Headmaster is here. This is the end of the line. How do you survive?", 
             choices: [
                 { h: "Burn 'Annihilator Bae'", n: 'burn' },
                 { h: "Play a Plot Twist", n: 'plot' }
             ] 
         },
         burn: {
-            img: 'burn.jpg',
-            msg: "You feed 'Annihilator Bae' into the void. The MOJO surge is blinding, but the cost is high.",
-            choices: [{ h: "Press the advantage", n: 'near_loss' }]
+            img: 'burn.png',
+            msg: "You sacrifice 'Bae' to the void. The power is immense, but the Headmaster is still standing!",
+            choices: [{ h: "The final exchange...", n: 'near_loss' }]
         },
         plot: {
-            img: 'plot_twist.jpg',
-            msg: "REDACTED! You reveal a classified loophole. The Headmaster is stunned by your paperwork!",
-            choices: [{ h: "Claim victory", n: 'win' }]
+            img: 'plot_twist.png',
+            msg: "Wait! You reveal a classified Plot Twist. The Headmaster's contract is void!",
+            choices: [{ h: "Final strike!", n: 'win' }]
         },
         near_loss: {
-            img: 'the_near_loss.jpg',
-            msg: "The monster lunges! You barely sidestep the claws. One hit and it's over...",
-            choices: [{ h: "Final Counter-Attack!", n: 'win' }]
+            img: 'the_near_loss.png',
+            msg: "He's too strong! You're cornered, cards empty, breathing heavy. It's now or never.",
+            choices: [{ h: "Grip your cards and PUSH", n: 'win' }]
         },
         win: { 
             img: 'the_turning_tide.png', 
-            msg: "The tide turns. The shadows retreat. You've survived your first match in the contested realm.", 
+            msg: "The tide finally turns. The Headmaster retreats into the fog. You've won your first match.", 
             choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
         },
         ready: { 
             img: 'ready_for_more.png', 
-            msg: "The Council is waiting. You've proven you have the MOJO to survive.", 
+            msg: "The Council has seen your match. They are impressed... and curious.", 
             choices: [{ h: "CLOSE COMIC", n: 'backcover' }] 
         }
     };
@@ -143,7 +137,11 @@
         const btnsDiv = document.getElementById('btns');
         const txtDiv = document.getElementById('txt');
         btnsDiv.innerHTML = '';
-        document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
+        
+        // Cache-busting URL to force refresh
+        const imgUrl = s.img + "?v=" + new Date().getTime();
+        document.getElementById('art').style.backgroundImage = `url('${imgUrl}')`;
+        
         let i = 0;
         const timer = setInterval(() => {
             txtDiv.innerText = s.msg.substring(0, i);
