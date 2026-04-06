@@ -1,122 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montavera Initiation Protocol</title>
-    <style>
-        :root {
-            --neon-purple: #7B2CBF;
-            --void-black: #0D1B2A;
-            --bureau-beige: #E0E1DD;
-            --mojo-green: #00FF9F;
-        }
-
-        body {
-            background-color: var(--void-black);
-            color: var(--bureau-beige);
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
-
-        #game-container {
-            width: 90%;
-            max-width: 450px;
-            border: 1px solid var(--neon-purple);
-            padding: 20px;
-            background: rgba(13, 27, 42, 0.95);
-            box-shadow: 0 0 15px rgba(123, 44, 191, 0.3);
-            position: relative;
-            z-index: 5;
-        }
-
-        #art-box {
-            width: 100%;
-            height: 250px;
-            background-size: cover;
-            background-position: center;
-            border: 1px solid var(--neon-purple);
-            margin-bottom: 15px;
-            background-color: #000;
-            transition: background-image 0.5s ease-in-out;
-        }
-
-        #stats-bar {
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(224, 225, 221, 0.2);
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #terminal-text {
-            min-height: 130px;
-            line-height: 1.4;
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: transparent;
-            border: 1px solid var(--neon-purple);
-            color: var(--bureau-beige);
-            font-family: 'Courier New', Courier, monospace;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: rgba(123, 44, 191, 0.2);
-            border-color: var(--bureau-beige);
-        }
-
-        #mojo-val { color: var(--mojo-green); text-shadow: 0 0 5px var(--mojo-green); }
-
-        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-    </style>
-</head>
-<body>
-
-<div id="game-container">
-    <div id="art-box"></div>
-    <div id="stats-bar">
-        <span>MOJO: <span id="mojo-val">0</span></span>
-        <span>INCIDENT: #2026-REGISTRY</span>
-    </div>
-    <div id="terminal-text"></div>
-    <div id="options-zone"></div>
-</div>
-
 <script>
     const DISCORD_LINK = 'YOUR_DISCORD_RULES_LINK'; 
 
@@ -124,19 +5,59 @@
     const terminal = document.getElementById('terminal-text');
     const options = document.getElementById('options-zone');
     const artBox = document.getElementById('art-box');
+    const statsBar = document.getElementById('stats-bar');
 
     const story = {
         start: {
+            image: 'print_2_play.png',
+            text: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.\n\nWhat's the next step, Citizen?",
+            action: () => { statsBar.style.opacity = '0'; }, // Hide stats in real world
+            choices: [
+                { text: "Cut the cards with surgical precision", next: 'watch_scene' },
+                { text: "Tear them out like a chaotic anomaly", next: 'watch_scene' }
+            ]
+        },
+        watch_scene: {
+            image: 'watch_others_play.png',
+            text: "You jump onto the Discord. You watch the veterans move Agents and trigger Plot Twists like they're filing tax returns in a hurricane. \n\nYou think to yourself: 'I can do this. I have the paperwork.'",
+            choices: [
+                { text: "Ask for a practice match", next: 'online_match' },
+                { text: "Quietly observe the madness", next: 'online_match' }
+            ]
+        },
+        online_match: {
+            image: 'play_online.png',
+            text: "Your first online match against a friend. The screen glows. The MOJO flows. You win your first game and the confidence feels like a gravitational shift. You're ready for the real thing.",
+            choices: [
+                { text: "Venturing out into Montavera...", next: 'city_gates' }
+            ]
+        },
+        city_gates: {
+            image: 'entering_montavera.png',
+            text: "The bedroom walls fade. The air smells like burnt paper and ozone. You stand before the city gates. \n\nYou are no longer just a player. You are a Citizen.",
+            choices: [
+                { text: "Step into the fog", next: 'first_encounter' }
+            ]
+        },
+        first_encounter: {
+            image: 'start.png',
+            text: "You are not ready.\n\nBut that has never stopped anyone in Montavera.\n\n—\n\nSomeone is approaching.\n\nNot a tutorial. Not a simulation. A real opponent has entered Montavera.\n\nThey are waiting.",
+            action: () => { statsBar.style.opacity = '1'; }, // Mojo appears
+            choices: [
+                { text: "Step forward and face them", next: 'the_match' }
+            ]
+        },
+        the_match: {
             image: 'the_boss.png',
-            text: "CITIZEN. Your presence has been registered. You slam your Boss, 'Annhialator Bae', onto the table. The MOJO hums with potential.\n\nTHE VETERAN: 'Bold. But in Montavera, even a Boss has to pay their taxes.'",
+            text: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match officially begins. This is where your training ends and the anomaly takes over.",
             choices: [
                 { text: "Burn for MOJO (+5)", next: 'burn_path' },
-                { text: "Set a Plot Twist (Hidden)", next: 'plot_path' }
+                { text: "Set a Plot Twist", next: 'plot_path' }
             ]
         },
         burn_path: {
             image: 'burn.png',
-            text: "You sacrifice a card for raw power. You feel unstoppable.\n\nSuddenly, the air chills. The Collector sneers and deploys 'The Enforcer'. A massive shadow looms over your Frontline.",
+            text: "Power surge. +5 MOJO. \n\nThe Collector sneers. He plays 'The Enforcer'. A massive shadow looms over your Frontline.",
             action: () => { updateMojo(5); },
             choices: [
                 { text: "Try to Block the Enforcer", next: 'block_fail' },
@@ -145,21 +66,21 @@
         },
         plot_path: {
             image: 'plot_twist.png',
-            text: "You slide a card into the Plot Zone. A hidden trap.\n\nThe Collector doesn't see it—he's too busy laughing while he plays 'The Enforcer'. He strikes your Seat!",
+            text: "A hidden trap. The Collector doesn't see it—he's too busy laughing while he plays 'The Enforcer'. He strikes your Seat!",
             choices: [
                 { text: "Attempt to Block", next: 'block_fail' }
             ]
         },
         block_fail: {
             image: 'failed_block.png',
-            text: "ERROR. You try to block with a Producer, but it has no combat stats. The Enforcer walks right through your defense like a ghost.\n\nYour Seat is wide open. You are one hit from total Redaction.",
+            text: "ERROR. You try to block with a Producer, but it has no combat stats. The Enforcer walks right through your defense. Your Seat is smoking.",
             choices: [
-                { text: "Desperately seek a deal", next: 'the_deal' }
+                { text: "Seek a deal", next: 'the_deal' }
             ]
         },
         bribe_move: {
             image: 'the_bribe.png',
-            text: "Gold talks. The Enforcer checks his bank account and steps aside. You have an opening, but the Collector is ready to counter.\n\nRoll for Initiative!",
+            text: "Gold talks. The Enforcer steps aside. Now, roll for Initiative to strike first!",
             action: () => { updateMojo(-3); },
             choices: [
                 { text: "[ROLL D6]", next: 'roll_init' }
@@ -167,7 +88,7 @@
         },
         the_deal: {
             image: 'the_corrupt_deal.png',
-            text: "The Collector stops. He leans in. 'I'll call off the strike, kid. But only if you sign over your Agent to me. A simple bribe of souls.'",
+            text: "The Collector leans in. 'I'll call off the strike, kid. Just hand over control of your Agent. Sign here.'",
             choices: [
                 { text: "Refuse (Take the damage)", next: 'near_loss' },
                 { text: "Accept (Lose your unit)", next: 'near_loss' }
@@ -175,7 +96,7 @@
         },
         roll_init: {
             image: 'initiative.png',
-            text: "The die glitches in the air. A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!",
+            text: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!",
             action: () => { document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); },
             choices: [
                 { text: "Turn the Tide!", next: 'win_sequence' }
@@ -183,21 +104,21 @@
         },
         near_loss: {
             image: 'the_near_loss.png',
-            text: "Your Seat is smoking. Your cards are gone. The Collector is preparing the final paperwork to end your existence.\n\nBut wait—you still have that one card in the Plot Zone.",
+            text: "Everything is fading. The Collector is preparing the final paperwork to end your existence.\n\nWait—the hidden Plot Twist!",
             choices: [
-                { text: "Flip the Plot Twist!", next: 'win_sequence' }
+                { text: "FLIP IT!", next: 'win_sequence' }
             ]
         },
         win_sequence: {
             image: 'the_turning_tide.png',
-            text: "SUCCESS. Your Plot Twist finds a loophole in reality. The Enforcer is deleted. The Collector's hand is forced. He retreats into the fog.\n\nYou have survived the initiation.",
+            text: "SUCCESS. Your Plot Twist finds a loophole in reality. The Enforcer is deleted. The Collector retreats. You have survived the initiation.",
             choices: [
                 { text: "CLAIM VICTORY", next: 'final_screen' }
             ]
         },
         final_screen: {
             image: 'ready_for_more.png',
-            text: "You're ready, Montavera! The city is yours to conquer. Report to the Council for your official credentials.",
+            text: "You're ready, Montavera! The city is yours to conquer. Report to the Council for your final credentials.",
             choices: [
                 { text: "ENTER DISCORD (#SERVER-RULES)", next: 'exit' }
             ]
@@ -224,13 +145,10 @@
         }
         const scene = story[key];
         options.innerHTML = '';
-        
         if (scene.image) {
             artBox.style.backgroundImage = `url('${scene.image}')`;
         }
-        
         if (scene.action) scene.action();
-        
         typeWriter(scene.text, () => {
             scene.choices.forEach(c => {
                 const b = document.createElement('button');
@@ -249,5 +167,3 @@
 
     renderScene('start');
 </script>
-</body>
-</html>
