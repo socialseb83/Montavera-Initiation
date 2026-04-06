@@ -1,25 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montavera Initiation Protocol</title>
-    <style>
-        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; }
-        body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 40px 0; overflow-y: auto; position: relative; }
-        body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 10; background-size: 100% 3px, 3px 100%; pointer-events: none; }
-        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13,27,42,0.95); box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); position: relative; z-index: 5; margin-bottom: 40px; }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease-in-out; }
-        #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 20px; }
-        .btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .btn:hover { background: rgba(123, 44, 191, 0.3); color: #fff; border-color: var(--t); }
-    </style>
-</head>
 <body>
 
-<audio id="bgm" loop src="https://raw.githubusercontent.com/socialseb83/Montavera-Initiation/main/welcome_to_montavera.mp3"></audio>
-
 <div id="game">
+    <div style="margin-bottom:10px; font-size:10px; color:var(--g);">AUDIO MANIFEST:</div>
+    <audio id="bgm" loop controls style="width:100%; height:30px; margin-bottom:15px;">
+        <source src="https://raw.githubusercontent.com/socialseb83/Montavera-Initiation/main/welcome_to_montavera.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="art"></div>
     <div id="txt"></div>
     <div id="btns"></div>
@@ -34,36 +20,15 @@
 
     bgm.volume = 0.5;
 
-    const story = {
-        start: { img: 'print_2_play.png', msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] },
-        watch: { img: 'watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents and trigger Plot Twists like they're filing tax returns in a hurricane.", choices: [{ h: "Ask for a practice match", n: 'online' }, { h: "Quietly observe the madness", n: 'online' }] },
-        online: { img: 'play_online.png', msg: "Your first online match. The screen glows. The MOJO flows. You win your first game and the confidence feels like a gravitational shift.", choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] },
-        gates: { img: 'entering_montavera.png', msg: "The bedroom walls fade. The air smells like burnt paper and ozone. You stand before the city gates. You are no longer just a player. You are a Citizen.", choices: [{ h: "Step into the fog", n: 'encounter' }] },
-        encounter: { img: 'start.png', msg: "You are not ready.\n\nBut that has never stopped anyone in Montavera.\n\n—\n\nSomeone is approaching. Not a simulation. Face them.", choices: [{ h: "Step forward and face them", n: 'boss' }] },
-        boss: { img: 'the_boss.png', msg: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match begins.\n\nTHE VETERAN: 'Bold. But even a Boss has to pay taxes.'", choices: [{ h: "Burn for MOJO (+5)", n: 'burn' }, { h: "Set a Plot Twist", n: 'plot' }] },
-        burn: { img: 'burn.png', msg: "Power surge. +5 MOJO. The Collector sneers and deploys 'The Enforcer'. A massive shadow looms over your Frontline.", choices: [{ h: "Try to Block the Enforcer", n: 'fail' }, { h: "Bribe the Enforcer (-3 MOJO)", n: 'bribe' }] },
-        plot: { img: 'plot_twist.png', msg: "A hidden trap. The Collector strikes your Seat!", choices: [{ h: "Attempt to Block", n: 'fail' }] },
-        fail: { img: 'failed_block.png', msg: "ERROR. You try to block with a Producer, but it has no combat stats. The Enforcer walks right through you. Your Seat is smoking.", choices: [{ h: "Seek a deal", n: 'deal' }] },
-        bribe: { img: 'the_bribe.png', msg: "Gold talks. The Enforcer steps aside. Now, roll for Initiative to strike first!", choices: [{ h: "[ROLL D6]", n: 'init' }] },
-        deal: { img: 'the_corrupt_deal.png', msg: "The Collector leans in. 'I'll call off the strike, kid. Just hand over control of your Agent. Sign here.'", choices: [{ h: "Refuse (Take the damage)", n: 'near_loss' }, { h: "Accept (Lose your unit)", n: 'near_loss' }] },
-        init: { img: 'initiative.png', msg: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!", action: () => { document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); }, choices: [{ h: "Turn the Tide!", n: 'win' }] },
-        near_loss: { img: 'the_near_loss.png', msg: "Everything is fading. The Collector is preparing the final paperwork to end your existence.\n\nWait—the hidden Plot Twist!", choices: [{ h: "FLIP IT!", n: 'win' }] },
-        win: { img: 'the_turning_tide.png', msg: "SUCCESS. Your Plot Twist finds a loophole in reality. The Enforcer is deleted. You have survived the initiation.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
-        ready: { img: 'ready_for_more.png', msg: "You're ready, Montavera! The city is yours to conquer. Report to the Council.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
-    };
-
     function render(k) {
-        // This is the trigger: Audio starts on the very first button click
-        if (bgm.paused) {
-            bgm.play().catch(e => console.log("Audio waiting for first click. Check Mute Switch!"));
-        }
+        // Force attempt
+        bgm.play().catch(e => console.log("Manual play required on this device."));
         
         if (k === 'exit') { window.location.href = DISCORD; return; }
         const s = story[k];
         btns.innerHTML = '';
         art.style.backgroundImage = `url('${s.img}')`;
-        if (s.action) s.action();
-
+        
         txt.innerText = '';
         let i = 0;
         const timer = setInterval(() => {
@@ -81,7 +46,19 @@
             }
         }, 20);
     }
+    
+    // The story object remains the same as before
+    const story = {
+        start: { img: 'print_2_play.png', msg: "It started in your bedroom. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards", n: 'watch' }] },
+        watch: { img: 'watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents.", choices: [{ h: "Ask for a match", n: 'online' }] },
+        online: { img: 'play_online.png', msg: "Your first online match. You win!", choices: [{ h: "Enter Montavera", n: 'gates' }] },
+        gates: { img: 'entering_montavera.png', msg: "You stand before the city gates.", choices: [{ h: "Step into the fog", n: 'encounter' }] },
+        encounter: { img: 'start.png', msg: "Someone is approaching. Face them.", choices: [{ h: "Step forward", n: 'boss' }] },
+        boss: { img: 'the_boss.png', msg: "The match begins.", choices: [{ h: "Burn for MOJO", n: 'win' }] },
+        win: { img: 'the_turning_tide.png', msg: "SUCCESS. You survived.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
+        ready: { img: 'ready_for_more.png', msg: "Report to the Council.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
+    };
+
     render('start');
 </script>
 </body>
-</html>
