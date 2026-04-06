@@ -23,13 +23,13 @@
         z-index: 100; 
         display: flex; 
         flex-direction: column; 
-        justify-content: flex-end; 
+        justify-content: flex-end; /* Pushes content to the bottom */
         align-items: center; 
         text-align: center; 
-        padding-bottom: 40px;
+        padding-bottom: 6vh; /* Dynamic spacing for small screens */
     }
 
-    /* Background Blur Effect to fill the gaps */
+    /* Background Blur Effect */
     #splash::before {
         content: "";
         position: absolute;
@@ -37,45 +37,55 @@
         background-image: url('cover_1.png');
         background-size: cover;
         background-position: center;
-        filter: blur(15px) brightness(0.3);
+        filter: blur(20px) brightness(0.2);
         z-index: -1;
     }
 
-    /* The Main Image - SET TO CONTAIN */
+    /* The Main Image - Scaled for better button clearance */
     #cover-art {
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 85%; /* Leaves room for button at bottom */
+        top: 2vh; left: 0; width: 100%; height: 70%; 
         background-image: url('cover_1.png');
-        background-size: contain; /* ENTIRE IMAGE WILL SHOW */
+        background-size: contain;
         background-repeat: no-repeat;
         background-position: center top;
         z-index: 1;
     }
 
-    #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); display: none; position: relative; z-index: 20; }
-    
+    /* BIGGER, GLOWING BUTTON */
     #boot-btn { 
         position: relative;
         z-index: 10;
-        border: 2px solid var(--y); 
+        border: 3px solid var(--y); 
         color: var(--y); 
         text-align: center; 
-        width: 280px; 
+        width: 85%; /* Scales with screen width */
+        max-width: 320px;
         background: rgba(0,0,0,0.9); 
-        font-weight: bold; 
-        font-size: 1.1rem; 
-        letter-spacing: 2px;
-        box-shadow: 0 0 25px rgba(255, 214, 10, 0.6);
+        font-weight: 900; 
+        font-size: 1.4rem; /* Larger text */
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        box-shadow: 0 0 30px rgba(255, 214, 10, 0.5);
         cursor: pointer;
-        padding: 15px;
+        padding: 20px;
+        animation: pulse 2s infinite; /* Make it move! */
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 15px rgba(255, 214, 10, 0.4); transform: scale(1); }
+        50% { box-shadow: 0 0 35px rgba(255, 214, 10, 0.7); transform: scale(1.02); }
+        100% { box-shadow: 0 0 15px rgba(255, 214, 10, 0.4); transform: scale(1); }
     }
 
     .hint { 
         position: relative;
         z-index: 10;
-        font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; 
-        background: rgba(0,0,0,0.8); padding: 4px 12px; border-radius: 4px; 
+        font-size: 11px; color: #fff; margin-top: 15px; font-style: italic; 
+        background: rgba(0,0,0,0.8); padding: 6px 15px; border-radius: 4px; 
     }
+
+    #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; z-index: 20; }
 </style>
 
 <body>
@@ -83,5 +93,5 @@
 <div id="splash">
     <div id="cover-art"></div>
     <button id="boot-btn" onclick="bootSystem()">AUTHORIZE ACCESS</button>
-    <div class="hint">Check volume & silent switch</div>
+    <div class="hint">Ensure volume is UP for audio</div>
 </div>
