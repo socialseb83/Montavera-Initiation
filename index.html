@@ -5,93 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montavera Initiation Protocol</title>
     <style>
-        :root { 
-            --p: #7B2CBF; 
-            --b: #0D1B2A; 
-            --t: #E0E1DD; 
-            --g: #00FF9F; 
-        }
-
-        body { 
-            background: var(--b); 
-            color: var(--t); 
-            font-family: 'Courier New', Courier, monospace; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 40px 0; 
-            overflow-y: auto; 
-            position: relative;
-        }
-
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
-
-        #game { 
-            width: 90%; 
-            max-width: 400px; 
-            border: 1px solid var(--p); 
-            padding: 20px; 
-            background: rgba(13,27,42,0.95); 
-            box-shadow: 0 0 15px rgba(123, 44, 191, 0.3);
-            position: relative;
-            z-index: 5;
-            margin-bottom: 40px;
-        }
-
-        #art { 
-            width: 100%; 
-            height: 220px; 
-            background-size: cover; 
-            background-position: center; 
-            border: 1px solid var(--p); 
-            margin-bottom: 15px; 
-            background-color: #000;
-            transition: background-image 0.5s ease-in-out;
-        }
-
-        #txt { 
-            min-height: 120px; 
-            line-height: 1.4; 
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-            margin-bottom: 20px; 
-        }
-
-        .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 12px; 
-            margin: 8px 0; 
-            background: transparent; 
-            border: 1px solid var(--p); 
-            color: var(--t); 
-            font-family: inherit;
-            cursor: pointer; 
-            text-align: left; 
-            transition: all 0.2s; 
-        }
-
-        .btn:hover { 
-            background: rgba(123, 44, 191, 0.3); 
-            color: #fff; 
-            border-color: var(--t);
-        }
+        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; }
+        body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 40px 0; overflow-y: auto; position: relative; }
+        body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 10; background-size: 100% 3px, 3px 100%; pointer-events: none; }
+        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13,27,42,0.95); box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); position: relative; z-index: 5; margin-bottom: 40px; }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease-in-out; }
+        #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 20px; }
+        .btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .btn:hover { background: rgba(123, 44, 191, 0.3); color: #fff; border-color: var(--t); }
+        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
+
+<audio id="bgm" loop src="Welcome to Mntavera.mp3"></audio>
+<audio id="sfx" src="glitch_sound.mp3"></audio>
+
 <div id="game">
     <div id="art"></div>
     <div id="txt"></div>
@@ -99,11 +29,14 @@
 </div>
 
 <script>
-    // YOUR PERMANENT LINK APPLIED
     const DISCORD = 'https://discord.gg/sHSN5ke62F'; 
     const art = document.getElementById('art');
     const txt = document.getElementById('txt');
     const btns = document.getElementById('btns');
+    const bgm = document.getElementById('bgm');
+    const sfx = document.getElementById('sfx');
+
+    let audioStarted = false;
 
     const story = {
         start: { img: 'print_2_play.png', msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] },
@@ -117,17 +50,24 @@
         fail: { img: 'failed_block.png', msg: "ERROR. You try to block with a Producer, but it has no combat stats. The Enforcer walks right through you. Your Seat is smoking.", choices: [{ h: "Seek a deal", n: 'deal' }] },
         bribe: { img: 'the_bribe.png', msg: "Gold talks. The Enforcer steps aside. Now, roll for Initiative to strike first!", choices: [{ h: "[ROLL D6]", n: 'init' }] },
         deal: { img: 'the_corrupt_deal.png', msg: "The Collector leans in. 'I'll call off the strike, kid. Just hand over control of your Agent. Sign here.'", choices: [{ h: "Refuse (Take the damage)", n: 'near_loss' }, { h: "Accept (Lose your unit)", n: 'near_loss' }] },
-        init: { img: 'initiative.png', msg: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!", choices: [{ h: "Turn the Tide!", n: 'win' }] },
+        init: { img: 'initiative.png', msg: "A '6' flashes! You act first. But wait—The Collector plays a secret Redaction card to delete your play!", action: () => { sfx.play(); document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); }, choices: [{ h: "Turn the Tide!", n: 'win' }] },
         near_loss: { img: 'the_near_loss.png', msg: "Everything is fading. The Collector is preparing the final paperwork to end your existence.\n\nWait—the hidden Plot Twist!", choices: [{ h: "FLIP IT!", n: 'win' }] },
         win: { img: 'the_turning_tide.png', msg: "SUCCESS. Your Plot Twist finds a loophole in reality. The Enforcer is deleted. You have survived the initiation.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
         ready: { img: 'ready_for_more.png', msg: "You're ready, Montavera! The city is yours to conquer. Report to the Council.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
     };
 
     function render(k) {
+        if (!audioStarted) {
+            bgm.play().catch(e => console.log("Audio waiting for interaction"));
+            audioStarted = true;
+        }
+        
         if (k === 'exit') { window.location.href = DISCORD; return; }
         const s = story[k];
         btns.innerHTML = '';
         art.style.backgroundImage = `url('${s.img}')`;
+        if (s.action) s.action();
+
         txt.innerText = '';
         let i = 0;
         const timer = setInterval(() => {
