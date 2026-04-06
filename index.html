@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FACTIONS: MONTAVERA</title>
     <style>
-        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
+        :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --y: #FFD60A; }
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
         .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; background-repeat: no-repeat; background-position: center top; background-size: contain; }
@@ -16,22 +16,22 @@
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
 
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
-        #txt { min-height: 120px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
-        .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 13px; }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.4s ease-in-out; }
+        #txt { min-height: 110px; line-height: 1.4; margin-bottom: 20px; font-size: 13px; }
+        .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Bureaucracy is loading. Stay sharp.</div>
+    <div class="hint">Protocol initialized. Music link active.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">TILL NEXT TIME...</button>
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">OR LAST TIME...</button>
-    <div class="hint">Council protocols complete.</div>
+    <div class="hint">Report to the Council Rules channel.</div>
 </div>
 
 <audio id="bgm" loop preload="auto">
@@ -47,97 +47,89 @@
 <script>
     const story = {
         start: { 
-            img: 'initiative.png', 
-            msg: "The golden dice tumble. The contested realm awaits. How do you move?", 
-            choices: [
-                { h: "Roll for high-ground", n: 'gates' },
-                { h: "Charge into the fog", n: 'gates' }
-            ] 
+            img: 'print_2_play.png', 
+            msg: "It started in your bedroom. A printer, cardstock, and a dream of bureaucratic dominance. You've printed your first deck.", 
+            choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] 
         },
-        gates: { 
-            img: 'entering_montavera.png', 
-            msg: "The gates of Montavera loom. A figure in a top hat watches from the mist.", 
-            choices: [
-                { h: "Offer a Bribe (5 MOJO)", n: 'bribe' },
-                { h: "Confront the Shadow Enforcer", n: 'enforcer' }
-            ] 
+        watch: { 
+            img: 'watch_others_play.png', 
+            msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", 
+            choices: [{ h: "Study the meta-game", n: 'faceoff' }, { h: "Ask for a practice match", n: 'faceoff' }] 
         },
-        bribe: {
-            img: 'the_bribe.png',
-            msg: "You slide a glowing pouch across the stones. The Collector pauses.",
-            choices: [
-                { h: "Seal the deal", n: 'deal' },
-                { h: "Ask for a better Agent", n: 'deal' }
-            ]
+        faceoff: {
+            img: 'start.png',
+            msg: "Your confidence grows. You find an opponent online. The screen glows as the first match begins.",
+            choices: [{ h: "Commit to the play", n: 'city' }, { h: "Ready your opening hand", n: 'city' }]
         },
-        deal: {
-            img: 'the_corrupt_deal.png',
-            msg: "A contract is signed in smoke. You gain a powerful ally for the final fight.",
-            choices: [
-                { h: "Confront the Boss", n: 'boss' },
-                { h: "Prepare for the paperwork", n: 'boss' }
-            ]
+        city: {
+            img: 'entering_montavera.png',
+            msg: "The bedroom walls fade. You head into the city for your first real in-person tournament. The fog is thick.",
+            choices: [{ h: "Step into the venue", n: 'oldman' }, { h: "Find your table", n: 'oldman' }]
         },
-        enforcer: {
+        oldman: {
+            img: 'the_boss.png',
+            msg: "Your first real enemy awaits. A creepy old man with a hungry grin. 'Ready to lose your MOJO, boy?'",
+            choices: [{ h: "Sit at the table", n: 'summon_enforcer' }, { h: "Slam your deck down", n: 'summon_enforcer' }]
+        },
+        summon_enforcer: {
             img: 'the_enforcer.png',
-            msg: "The Enforcer draws a shadow-blade! You have no credentials here.",
-            choices: [
-                { h: "Block with a Defender", n: 'failed_block' },
-                { h: "Dodge and Counter", n: 'failed_block' }
-            ]
+            msg: "He doesn't waste time. He summons a Shadow Enforcer! The air in the room turns ice cold.",
+            choices: [{ h: "Steady your nerves", n: 'corrupt_deal' }, { h: "Grip your cards tight", n: 'corrupt_deal' }]
         },
-        failed_block: {
-            img: 'failed_block.png',
-            msg: "CRACK! Your Defender is shattered. You're losing MOJO fast.",
-            choices: [
-                { h: "Desperation move!", n: 'boss' },
-                { h: "Rally your remaining cards", n: 'boss' }
-            ]
+        corrupt_deal: {
+            img: 'the_corrupt_deal.png',
+            msg: "He leans in with a sneer. 'A deal, perhaps? Hand over your deck, and I'll let you walk away.'",
+            choices: [{ h: "Refuse the bribe", n: 'summon_bae' }, { h: "Declare war", n: 'summon_bae' }]
         },
-        boss: { 
-            img: 'the_boss.png', 
-            msg: "The Headmaster arrives. The stakes? Your very citizenship. It's time.", 
-            choices: [
-                { h: "Burn 'Annihilator Bae'", n: 'burn' },
-                { h: "Reveal a Plot Twist", n: 'plot' }
-            ] 
+        summon_bae: {
+            img: 'the_turning_tide.png',
+            msg: "You summon 'Annihilator Bae'! She glows with a fierce, defiant light. The counter-attack begins.",
+            choices: [{ h: "Prepare for combat", n: 'roll' }, { h: "Check for high-ground", n: 'roll' }]
         },
-        burn: {
-            img: 'burn.png',
-            msg: "You sacrifice 'Bae' to the void. The power surge is terrifying.",
-            choices: [
-                { h: "Press the attack!", n: 'near_loss' },
-                { h: "Don't look back", n: 'near_loss' }
-            ]
+        roll: {
+            img: 'initiative.png',
+            msg: "The golden dice tumble. The Collector watches with a hungry grin. You need a high roll.",
+            choices: [{ h: "Watch the dice land", n: 'devoured' }, { h: "Hope for a crit", n: 'devoured' }]
         },
-        plot: {
-            img: 'plot_twist.png',
-            msg: "CLASSIFIED! You drop the ultimate paperwork. The contract is void!",
-            choices: [
-                { h: "Claim Victory", n: 'win' },
-                { h: "Sign the win", n: 'win' }
-            ]
-        },
-        near_loss: {
+        devoured: {
             img: 'the_near_loss.png',
-            msg: "He's too strong. You're cornered. Everything is on the line.",
-            choices: [
-                { h: "One final PUSH", n: 'win' },
-                { h: "Risk it all", n: 'win' }
-            ]
+            msg: "Disaster! The old man wins the roll. His monster lunges forward and devours 'Annihilator Bae' whole.",
+            choices: [{ h: "Gasp in horror", n: 'turning_tide' }, { h: "Desperation sets in...", n: 'turning_tide' }]
         },
-        win: { 
-            img: 'the_turning_tide.png', 
-            msg: "The tide turns. The Headmaster retreats. You've survived the initiation.", 
-            choices: [
-                { h: "Exhale in relief", n: 'ready' },
-                { h: "Celebrate your victory", n: 'ready' }
-            ] 
+        turning_tide: {
+            img: 'the_turning_tide.png',
+            msg: "But the game isn't over. You play 'The Turning Tide'! The battlefield shifts in your favor.",
+            choices: [{ h: "Seize the moment", n: 'seat_attack' }, { h: "Press the advantage", n: 'seat_attack' }]
         },
-        ready: { 
-            img: 'ready_for_more.png', 
-            msg: "The Council is satisfied. Welcome to the Kontested Realm, Citizen.", 
-            choices: [{ h: "CLOSE COMIC", n: 'backcover' }] 
+        seat_attack: {
+            img: 'failed_block.png',
+            msg: "Enraged, the old man orders his monster to attack YOU directly! You desperately command your agent to block.",
+            choices: [{ h: "Hold the line!", n: 'failed_block_res' }, { h: "Brace for impact", n: 'failed_block_res' }]
+        },
+        failed_block_res: {
+            img: 'failed_block.png',
+            msg: "FAIL! Your agent is a striker, not a blocker. The hit lands. You're bleeding MOJO.",
+            choices: [{ h: "Search for an answer", n: 'burn_card' }, { h: "One last trick...", n: 'burn_card' }]
+        },
+        burn_card: {
+            img: 'burn.png',
+            msg: "You realize the weakened 'Bae' is better used as fuel. You burn her card for a massive MOJO surge!",
+            choices: [{ h: "Channel the energy", n: 'bribe_enforcer' }, { h: "Pay the price", n: 'bribe_enforcer' }]
+        },
+        bribe_enforcer: {
+            img: 'the_bribe.png',
+            msg: "You use the MOJO to bribe his Enforcer! You slide a green sack of power across the table.",
+            choices: [{ h: "Buy his loyalty", n: 'plot_twist' }, { h: "Turn the tables", n: 'plot_twist' }]
+        },
+        plot_twist: {
+            img: 'plot_twist.png',
+            msg: "With the Enforcer distracted, you activate your Plot Twist! The Headmaster's contract is shredded!",
+            choices: [{ h: "DECLARE VICTORY", n: 'window_yell' }, { h: "FINISH THE MATCH", n: 'window_yell' }]
+        },
+        window_yell: {
+            img: 'ready_for_more.png',
+            msg: "Back in your bedroom, you yell out the window: 'I'M READY, MONTAVERA! LET'S DO THIS!' You need more.",
+            choices: [{ h: "CLOSE COMIC", n: 'backcover' }]
         }
     };
 
@@ -164,10 +156,7 @@
         const btnsDiv = document.getElementById('btns');
         const txtDiv = document.getElementById('txt');
         btnsDiv.innerHTML = '';
-        
-        // Direct image call
         document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
-        
         let i = 0;
         const timer = setInterval(() => {
             txtDiv.innerText = s.msg.substring(0, i);
