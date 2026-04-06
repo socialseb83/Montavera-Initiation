@@ -16,7 +16,7 @@
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
 
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.4s ease-in-out; }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 110px; line-height: 1.4; margin-bottom: 20px; font-size: 13px; }
         .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 12px; }
     </style>
@@ -25,7 +25,7 @@
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Protocol initialized. Music link active.</div>
+    <div class="hint">Check volume. Handshake protocol active.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
@@ -46,89 +46,107 @@
 
 <script>
     const story = {
+        // 1. Splash (Handled by bootSystem)
+        // 2. Boy with Printer
         start: { 
             img: 'print_2_play.png', 
-            msg: "It started in your bedroom. A printer, cardstock, and a dream of bureaucratic dominance. You've printed your first deck.", 
-            choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] 
+            msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck of Factions: Montavera.", 
+            choices: [{ h: "Cut the cards", n: 'watch' }, { h: "Tear them out", n: 'watch' }] 
         },
+        // 3. Boy watching games
         watch: { 
             img: 'watch_others_play.png', 
             msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", 
-            choices: [{ h: "Study the meta-game", n: 'faceoff' }, { h: "Ask for a practice match", n: 'faceoff' }] 
+            choices: [{ h: "Study the meta", n: 'faceoff' }, { h: "Join a stream", n: 'faceoff' }] 
         },
+        // 4. Boy facing off online
         faceoff: {
             img: 'start.png',
             msg: "Your confidence grows. You find an opponent online. The screen glows as the first match begins.",
-            choices: [{ h: "Commit to the play", n: 'city' }, { h: "Ready your opening hand", n: 'city' }]
+            choices: [{ h: "Ready your hand", n: 'city' }, { h: "Connect to server", n: 'city' }]
         },
+        // 5. Boy going to city
         city: {
             img: 'entering_montavera.png',
-            msg: "The bedroom walls fade. You head into the city for your first real in-person tournament. The fog is thick.",
-            choices: [{ h: "Step into the venue", n: 'oldman' }, { h: "Find your table", n: 'oldman' }]
+            msg: "The walls fade. You head into the city for your first in-person match. The fog is thick and heavy.",
+            choices: [{ h: "Enter the venue", n: 'oldman' }, { h: "Find your table", n: 'oldman' }]
         },
+        // 6. First enemy (Old Man)
         oldman: {
             img: 'the_boss.png',
             msg: "Your first real enemy awaits. A creepy old man with a hungry grin. 'Ready to lose your MOJO, boy?'",
-            choices: [{ h: "Sit at the table", n: 'summon_enforcer' }, { h: "Slam your deck down", n: 'summon_enforcer' }]
+            choices: [{ h: "Sit at the table", n: 'summon_enforcer' }, { h: "Challenge him", n: 'summon_enforcer' }]
         },
+        // 7. Old man summons Enforcer
         summon_enforcer: {
             img: 'the_enforcer.png',
-            msg: "He doesn't waste time. He summons a Shadow Enforcer! The air in the room turns ice cold.",
-            choices: [{ h: "Steady your nerves", n: 'corrupt_deal' }, { h: "Grip your cards tight", n: 'corrupt_deal' }]
+            msg: "He doesn't waste time. He summons a Shadow Enforcer! The air turns ice cold.",
+            choices: [{ h: "Steady your nerves", n: 'corrupt_deal' }, { h: "Grip your cards", n: 'corrupt_deal' }]
         },
+        // 8. Corrupt deal
         corrupt_deal: {
             img: 'the_corrupt_deal.png',
-            msg: "He leans in with a sneer. 'A deal, perhaps? Hand over your deck, and I'll let you walk away.'",
-            choices: [{ h: "Refuse the bribe", n: 'summon_bae' }, { h: "Declare war", n: 'summon_bae' }]
+            msg: "He sneers. 'A deal? Hand over your deck, and I'll let you walk away.'",
+            choices: [{ h: "Refuse him", n: 'summon_bae' }, { h: "Declare war", n: 'summon_bae' }]
         },
+        // 9. Boy summons Annihilator Bae
         summon_bae: {
             img: 'the_turning_tide.png',
-            msg: "You summon 'Annihilator Bae'! She glows with a fierce, defiant light. The counter-attack begins.",
-            choices: [{ h: "Prepare for combat", n: 'roll' }, { h: "Check for high-ground", n: 'roll' }]
+            msg: "You summon 'Annihilator Bae'! She glows with a fierce light. The counter-attack begins.",
+            choices: [{ h: "Combat stance", n: 'roll' }, { h: "Analyze battle", n: 'roll' }]
         },
+        // 10. Roll for Initiative
         roll: {
             img: 'initiative.png',
             msg: "The golden dice tumble. The Collector watches with a hungry grin. You need a high roll.",
-            choices: [{ h: "Watch the dice land", n: 'devoured' }, { h: "Hope for a crit", n: 'devoured' }]
+            choices: [{ h: "Watch the dice", n: 'devoured' }, { h: "Pray for a crit", n: 'devoured' }]
         },
+        // 11. Old man wins / Near Loss
         devoured: {
             img: 'the_near_loss.png',
-            msg: "Disaster! The old man wins the roll. His monster lunges forward and devours 'Annihilator Bae' whole.",
-            choices: [{ h: "Gasp in horror", n: 'turning_tide' }, { h: "Desperation sets in...", n: 'turning_tide' }]
+            msg: "Disaster! The old man wins the roll. His monster lunges and devours 'Annihilator Bae' whole.",
+            choices: [{ h: "Gasp in horror", n: 'turning_tide' }, { h: "Search for hope...", n: 'turning_tide' }]
         },
+        // 12. Boy plays Turning Tide
         turning_tide: {
             img: 'the_turning_tide.png',
             msg: "But the game isn't over. You play 'The Turning Tide'! The battlefield shifts in your favor.",
-            choices: [{ h: "Seize the moment", n: 'seat_attack' }, { h: "Press the advantage", n: 'seat_attack' }]
+            choices: [{ h: "Seize the moment", n: 'seat_attack' }, { h: "Push back", n: 'seat_attack' }]
         },
+        // 13. Attack on seat / Block / Fail
         seat_attack: {
             img: 'failed_block.png',
-            msg: "Enraged, the old man orders his monster to attack YOU directly! You desperately command your agent to block.",
-            choices: [{ h: "Hold the line!", n: 'failed_block_res' }, { h: "Brace for impact", n: 'failed_block_res' }]
+            msg: "Enraged, he orders his monster to attack YOU directly! You command your agent to block.",
+            choices: [{ h: "Hold the line!", n: 'failed_block_res' }, { h: "Brace yourself", n: 'failed_block_res' }]
         },
+        // (Step 13 part 2: The Fail)
         failed_block_res: {
             img: 'failed_block.png',
             msg: "FAIL! Your agent is a striker, not a blocker. The hit lands. You're bleeding MOJO.",
-            choices: [{ h: "Search for an answer", n: 'burn_card' }, { h: "One last trick...", n: 'burn_card' }]
+            choices: [{ h: "Find an answer", n: 'burn_card' }, { h: "One last trick...", n: 'burn_card' }]
         },
+        // 14. Burn card for MOJO
         burn_card: {
             img: 'burn.png',
-            msg: "You realize the weakened 'Bae' is better used as fuel. You burn her card for a massive MOJO surge!",
-            choices: [{ h: "Channel the energy", n: 'bribe_enforcer' }, { h: "Pay the price", n: 'bribe_enforcer' }]
+            msg: "You realize the weakened 'Bae' is better as fuel. You burn her card for a massive MOJO surge!",
+            choices: [{ h: "Channel energy", n: 'bribe_enforcer' }, { h: "Pay the price", n: 'bribe_enforcer' }]
         },
+        // 15. Bribe the Enforcer
         bribe_enforcer: {
             img: 'the_bribe.png',
             msg: "You use the MOJO to bribe his Enforcer! You slide a green sack of power across the table.",
             choices: [{ h: "Buy his loyalty", n: 'plot_twist' }, { h: "Turn the tables", n: 'plot_twist' }]
         },
+        // 16. Activate Plot Twist / Defeat Old Man
         plot_twist: {
             img: 'plot_twist.png',
             msg: "With the Enforcer distracted, you activate your Plot Twist! The Headmaster's contract is shredded!",
-            choices: [{ h: "DECLARE VICTORY", n: 'window_yell' }, { h: "FINISH THE MATCH", n: 'window_yell' }]
+            choices: [{ h: "VICTORY!", n: 'window_yell' }, { h: "GAME OVER", n: 'window_yell' }]
         },
+        // 17. Bedroom Yell
         window_yell: {
             img: 'ready_for_more.png',
-            msg: "Back in your bedroom, you yell out the window: 'I'M READY, MONTAVERA! LET'S DO THIS!' You need more.",
+            msg: "Back in your bedroom, you yell out the window: 'I'M READY, MONTAVERA! LET'S DO THIS!'",
             choices: [{ h: "CLOSE COMIC", n: 'backcover' }]
         }
     };
@@ -156,7 +174,10 @@
         const btnsDiv = document.getElementById('btns');
         const txtDiv = document.getElementById('txt');
         btnsDiv.innerHTML = '';
+        
+        // Force the correct image path
         document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
+        
         let i = 0;
         const timer = setInterval(() => {
             txtDiv.innerText = s.msg.substring(0, i);
