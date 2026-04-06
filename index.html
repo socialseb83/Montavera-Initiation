@@ -9,42 +9,32 @@
         
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
-        /* CRT Scanline Overlay */
-        body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 50; background-size: 100% 3px, 3px 100%; pointer-events: none; }
-
-        /* FULL SCREEN COVERS (Front & Back) */
-        .cover { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 6vh; background-size: contain; background-repeat: no-repeat; background-position: center top; }
+        /* THE COVERS */
+        .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; }
         
-        .cover::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: blur(20px) brightness(0.2); z-index: -1; }
+        /* Using a single background with a fallback color to prevent the "Blackout" */
+        #splash { background: var(--b) url('cover_1.png') no-repeat center top / contain; display: flex; }
+        #back-cover { background: var(--b) url('back_cover_1.jpg') no-repeat center top / contain; display: none; z-index: 200; }
 
-        #splash { background-image: url('cover_1.png'); }
-        #splash::after { background-image: url('cover_1.png'); }
-
-        #back-cover { display: none; background-image: url('back_cover_1.jpg'); z-index: 200; }
-        #back-cover::after { background-image: url('back_cover_1.jpg'); }
-
-        /* CTA BUTTONS */
+        /* THE BUTTONS */
         .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 8px 0; }
-        
-        /* GAME BOX */
-        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease; }
-        #txt { min-height: 100px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
-        
-        .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 13px; }
-        .choice-btn:hover { background: rgba(123, 44, 191, 0.3); }
-
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
+
+        /* THE GAME */
+        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
+        #txt { min-height: 100px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
+        .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 13px; }
     </style>
 </head>
 <body>
 
-<div id="splash" class="cover">
+<div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
     <div class="hint">Check volume & silent switch</div>
 </div>
 
-<div id="back-cover" class="cover">
+<div id="back-cover" class="cover-page">
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">TILL NEXT TIME...</button>
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">OR LAST TIME...</button>
     <div class="hint">Why don't monsters eat bureaucrats? They're hard to digest.</div>
@@ -61,29 +51,10 @@
 </div>
 
 <script>
-    const splash = document.getElementById('splash');
-    const game = document.getElementById('game');
-    const backCover = document.getElementById('back-cover');
-    const bgm = document.getElementById('bgm');
-    let isBooted = false;
-
-    // BOOT LOGIC
-    document.getElementById('boot-btn').addEventListener('click', startBoot);
-    document.getElementById('boot-btn').addEventListener('touchstart', startBoot);
-
-    function startBoot() {
-        if (isBooted) return;
-        isBooted = true;
-        bgm.play().catch(() => {});
-        splash.style.display = 'none';
-        game.style.display = 'block';
-        render('start');
-    }
-
     const story = {
         start: { 
             img: 'print_2_play.png', 
-            msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", 
+            msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck of Factions: Montavera.", 
             choices: [
                 { h: "Cut the cards with surgical precision", n: 'watch' },
                 { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }
@@ -92,32 +63,50 @@
         watch: { 
             img: 'watch_others_play.png', 
             msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", 
-            choices: [{ h: "Ask for a practice match", n: 'online' }] 
+            choices: [
+                { h: "Ask for a practice match", n: 'online' },
+                { h: "Just watch and learn the meta", n: 'online' }
+            ] 
         },
         online: { 
             img: 'play_online.png', 
-            msg: "Your first online match. You win! The confidence feels like a gravitational shift.", 
-            choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] 
+            msg: "Your first online match. The screen glows. The confidence feels like a gravitational shift. You win!", 
+            choices: [
+                { h: "Venturing out into Montavera...", n: 'gates' },
+                { h: "Log out and dream of the city", n: 'gates' }
+            ] 
         },
         gates: { 
             img: 'entering_montavera.png', 
             msg: "The bedroom walls fade. You stand before the city gates. You are no longer just a player. You are a Citizen.", 
-            choices: [{ h: "Step into the fog", n: 'encounter' }] 
+            choices: [
+                { h: "Step into the fog", n: 'encounter' },
+                { h: "Present your credentials", n: 'encounter' }
+            ] 
         },
         encounter: { 
             img: 'start.png', 
             msg: "You are not ready. But that has never stopped anyone in Montavera. Face your opponent.", 
-            choices: [{ h: "Step forward", n: 'boss' }] 
+            choices: [
+                { h: "Step forward", n: 'boss' },
+                { h: "Ready your deck", n: 'boss' }
+            ] 
         },
         boss: { 
             img: 'the_boss.png', 
             msg: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match begins.", 
-            choices: [{ h: "Burn for MOJO (+5)", n: 'win' }] 
+            choices: [
+                { h: "Burn for MOJO (+5)", n: 'win' },
+                { h: "Trigger a Plot Twist", n: 'win' }
+            ] 
         },
         win: { 
             img: 'the_turning_tide.png', 
-            msg: "SUCCESS. Your Plot Twist finds a loophole in reality. You have survived.", 
-            choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
+            msg: "SUCCESS. Your strategy finds a loophole in reality. You have survived.", 
+            choices: [
+                { h: "CLAIM VICTORY", n: 'ready' },
+                { h: "Bask in the glory", n: 'ready' }
+            ] 
         },
         ready: { 
             img: 'ready_for_more.png', 
@@ -126,13 +115,27 @@
         }
     };
 
+    let isBooted = false;
+    const bgm = document.getElementById('bgm');
+
+    function startBoot() {
+        if (isBooted) return;
+        isBooted = true;
+        bgm.play().catch(() => {});
+        document.getElementById('splash').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
+        render('start');
+    }
+
+    document.getElementById('boot-btn').addEventListener('click', startBoot);
+    document.getElementById('boot-btn').addEventListener('touchstart', startBoot);
+
     function render(k) {
         if (k === 'backcover') {
-            game.style.display = 'none';
-            backCover.style.display = 'flex';
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('back-cover').style.display = 'flex';
             return;
         }
-
         const s = story[k];
         const btnsDiv = document.getElementById('btns');
         const txtDiv = document.getElementById('txt');
