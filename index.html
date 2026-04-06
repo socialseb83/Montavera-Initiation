@@ -8,16 +8,15 @@
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --y: #FFD60A; }
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
-        /* THE COVERS */
         .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; background-repeat: no-repeat; background-position: center top; background-size: contain; }
         
+        /* THE COVERS - Hard-coded to your screenshot names */
         #splash { background-image: url('1_cover_1.png'); display: flex; }
         #back-cover { background-image: url('18_back_cover_1.png'); display: none; z-index: 200; }
 
         .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 6px 0; }
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
 
-        /* THE GAME BOX */
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
         #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 110px; line-height: 1.4; margin-bottom: 20px; font-size: 13px; }
@@ -28,12 +27,12 @@
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Check volume. Handshake protocol active.</div>
+    <div class="hint">Check volume & silent switch.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
     <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">REPORT TO COUNCIL</button>
-    <div class="hint">Back cover: Review the Rules.</div>
+    <div class="hint">Rules channel protocol active.</div>
 </div>
 
 <audio id="bgm" loop preload="auto">
@@ -48,12 +47,13 @@
 
 <script>
     const story = {
+        // MATCHING FILENAMES TO YOUR SCREENSHOT EXACTLY
         s2: { img: '2_print_2_play.png', msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck.", choices: [{ h: "Cut the cards", n: 's3' }, { h: "Tear them out", n: 's3' }] },
         s3: { img: '3_watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", choices: [{ h: "Study the meta", n: 's4' }, { h: "Learn the plays", n: 's4' }] },
         s4: { img: '4_play_online.png', msg: "Time to test your MOJO. You log in and challenge your first opponent. The digital battlefield glows.", choices: [{ h: "Commit to the play", n: 's5' }, { h: "Ready your hand", n: 's5' }] },
         s5: { img: '5_entering_montavera.png', msg: "The bedroom walls fade. You head into the city of Montavera for a real opponent. The fog is thick.", choices: [{ h: "Enter the street", n: 's6' }, { h: "Find a match", n: 's6' }] },
         s6: { img: '6_start.png', msg: "In the heart of the fog, you encounter your first real enemy. A creepy old man with a hungry grin.", choices: [{ h: "Sit at the table", n: 's7' }, { h: "Challenge him", n: 's7' }] },
-        s7: { img: '7_the_enforcer.png', msg: "He doesn't waste time. He summons a Shadow Enforcer! The air in the street turns ice cold.", choices: [{ h: "Steady your nerves", n: 's8' }, { h: "Grip your cards", n: 's8' }] },
+        s7: { img: '7_the_enforcer.png', msg: "He doesn't waste time. He summons a Shadow Enforcer! The air turns ice cold.", choices: [{ h: "Steady your nerves", n: 's8' }, { h: "Grip your cards", n: 's8' }] },
         s8: { img: '8_the_corrupt_deal.png', msg: "He sneers. 'A deal? Hand over your deck, and I'll let you walk away.'", choices: [{ h: "Refuse the bribe", n: 's9' }, { h: "Declare war", n: 's9' }] },
         s9: { img: '9_the_boss.png', msg: "You summon 'Annihilator Bae'! She glows with a fierce, defiant light.", choices: [{ h: "Ready combat stance", n: 's10' }, { h: "Analyze the field", n: 's10' }] },
         s10: { img: '10_initiative.png', msg: "The golden dice tumble across the cobbles. You need a high roll.", choices: [{ h: "Watch the dice land", n: 's11' }, { h: "Hope for a crit", n: 's11' }] },
@@ -91,7 +91,7 @@
         const txtDiv = document.getElementById('txt');
         btnsDiv.innerHTML = '';
         
-        // Pure image loading
+        // Force direct URL and ensure no extra characters or timestamps are messing with it
         document.getElementById('art').style.backgroundImage = "url('" + s.img + "')";
         
         let i = 0;
