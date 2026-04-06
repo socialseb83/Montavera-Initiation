@@ -2,43 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FACTIONS: MONTAVERA</title>
     <style>
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
+        body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
-        body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; }
-        
-        /* THE SPLASH SCREEN */
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; }
-        
-        /* Background Blur */
         #splash::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('cover_1.png'); background-size: cover; background-position: center; filter: blur(20px) brightness(0.2); z-index: -1; }
-
-        /* The Main Image - pointer-events: none is the secret fix! */
         #cover-art { position: absolute; top: 2vh; left: 0; width: 100%; height: 70%; background-image: url('cover_1.png'); background-size: contain; background-repeat: no-repeat; background-position: center top; z-index: 1; pointer-events: none; }
 
-        /* THE BUTTON - Pushed to the front */
+        /* THE BUTTON - Now with explicit touch handling */
         #boot-btn { 
-            position: relative; z-index: 150; /* Higher than everything else */
+            position: relative; z-index: 999; 
             border: 3px solid var(--y); color: var(--y); text-align: center; 
             width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); 
             font-weight: 900; font-size: 1.4rem; text-transform: uppercase; 
             letter-spacing: 3px; box-shadow: 0 0 30px rgba(255, 214, 10, 0.5); 
             cursor: pointer; padding: 20px; animation: pulse 2s infinite; 
-            -webkit-tap-highlight-color: transparent;
+            display: block;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 15px rgba(255, 214, 10, 0.4); transform: scale(1); }
-            50% { box-shadow: 0 0 35px rgba(255, 214, 10, 0.7); transform: scale(1.02); }
-            100% { box-shadow: 0 0 15px rgba(255, 214, 10, 0.4); transform: scale(1); }
-        }
-
-        .hint { position: relative; z-index: 150; font-size: 11px; color: #fff; margin-top: 15px; font-style: italic; background: rgba(0,0,0,0.8); padding: 6px 15px; border-radius: 4px; pointer-events: none; }
-
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .hint { position: relative; z-index: 999; font-size: 11px; color: #fff; margin-top: 15px; font-style: italic; background: rgba(0,0,0,0.8); padding: 6px 15px; border-radius: 4px; pointer-events: none; }
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease-in-out; }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; margin-bottom: 20px; }
         .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; }
     </style>
@@ -47,7 +35,7 @@
 
 <div id="splash">
     <div id="cover-art"></div>
-    <button id="boot-btn" onclick="bootSystem()">AUTHORIZE ACCESS</button>
+    <button id="boot-btn" onmousedown="bootSystem()" ontouchstart="bootSystem()">AUTHORIZE ACCESS</button>
     <div class="hint">Ensure volume is UP for audio</div>
 </div>
 
@@ -63,23 +51,21 @@
 
 <script>
     const DISCORD = 'https://discord.gg/sHSN5ke62F'; 
-    const splash = document.getElementById('splash');
-    const game = document.getElementById('game');
-    const art = document.getElementById('art');
-    const txt = document.getElementById('txt');
-    const btns = document.getElementById('btns');
     const bgm = document.getElementById('bgm');
+    let isBooted = false;
 
-    bgm.volume = 0.5;
-
-    function bootSystem() {
-        console.log("Booting Montavera System...");
-        bgm.play().then(() => {
-            console.log("Audio online.");
-        }).catch(e => console.log("Audio waiting..."));
+    function bootSystem(e) {
+        if (isBooted) return;
+        isBooted = true;
         
-        splash.style.display = 'none';
-        game.style.display = 'block';
+        // Immediate visual feedback
+        document.getElementById('boot-btn').style.background = "#FFD60A";
+        document.getElementById('boot-btn').style.color = "#0D1B2A";
+
+        bgm.play().catch(() => console.log("Audio requires interaction"));
+        
+        document.getElementById('splash').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
         render('start');
     }
 
@@ -90,4 +76,33 @@
         gates: { img: 'entering_montavera.png', msg: "The bedroom walls fade. You stand before the city gates. You are no longer just a player. You are a Citizen.", choices: [{ h: "Step into the fog", n: 'encounter' }] },
         encounter: { img: 'start.png', msg: "You are not ready. But that has never stopped anyone in Montavera. Face your opponent.", choices: [{ h: "Step forward", n: 'boss' }] },
         boss: { img: 'the_boss.png', msg: "CITIZEN. The match begins.", choices: [{ h: "Burn for MOJO (+5)", n: 'win' }] },
-        win: { img: 'the_turning_t
+        win: { img: 'the_turning_tide.png', msg: "SUCCESS. You survived the initiation.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
+        ready: { img: 'ready_for_more.png', msg: "You're ready. Report to the Council.", choices: [{ h: "ENTER DISCORD", n: 'exit' }] }
+    };
+
+    function render(k) {
+        if (bgm.paused && k !== 'exit') { bgm.play().catch(() => {}); }
+        if (k === 'exit') { window.location.href = DISCORD; return; }
+        const s = story[k];
+        document.getElementById('btns').innerHTML = '';
+        document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
+        
+        let i = 0;
+        const timer = setInterval(() => {
+            document.getElementById('txt').innerText = s.msg.substring(0, i);
+            i++;
+            if (i > s.msg.length) {
+                clearInterval(timer);
+                s.choices.forEach(c => {
+                    const b = document.createElement('button');
+                    b.className = 'btn';
+                    b.innerText = `> ${c.h}`;
+                    b.onclick = () => render(c.n);
+                    document.getElementById('btns').appendChild(b);
+                });
+            }
+        }, 20);
+    }
+</script>
+</body>
+</html>
