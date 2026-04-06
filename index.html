@@ -105,4 +105,20 @@
         
         let i = 0;
         const timer = setInterval(() => {
-            txtDiv.innerText = s.msg.substring(0,
+            txtDiv.innerText = s.msg.substring(0, i);
+            i++;
+            if (i > s.msg.length) {
+                clearInterval(timer);
+                s.choices.forEach(c => {
+                    const b = document.createElement('button');
+                    b.className = 'choice-btn';
+                    b.innerText = "> " + c.h;
+                    b.onclick = () => render(c.n);
+                    btnsDiv.appendChild(b);
+                });
+            }
+        }, 20);
+    }
+</script>
+</body>
+</html>
