@@ -25,7 +25,7 @@
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Check volume/silent switch. Music: ACTIVE.</div>
+    <div class="hint">Check silent switch. Handshake active.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
@@ -71,12 +71,12 @@
         if (isBooted) return;
         isBooted = true;
         
-        // AUDIT: Forced immediate playback on first interaction
+        // --- THE HANDSHAKE (RESTORED) ---
+        // This is what tells iOS that the user specifically wanted audio.
         audio.play().then(() => {
-            console.log("Audio started successfully.");
-        }).catch(err => {
-            // iOS Fallback: Some versions require a second 'kickstart'
-            console.log("iOS Handshake required.");
+            console.log("Handshake successful.");
+        }).catch(() => {
+            // Force re-load if the first play fails
             audio.load();
             audio.play();
         });
@@ -86,7 +86,7 @@
         render('step2'); 
     }
 
-    // AUDIT: Using both click and touch events to ensure the iPhone registers the intent
+    // Capture both click and touch for iPhone Mini reliability
     document.getElementById('boot-btn').addEventListener('click', startBoot);
     document.getElementById('boot-btn').addEventListener('touchstart', startBoot);
 
@@ -105,20 +105,4 @@
         
         let i = 0;
         const timer = setInterval(() => {
-            txtDiv.innerText = s.msg.substring(0, i);
-            i++;
-            if (i > s.msg.length) {
-                clearInterval(timer);
-                s.choices.forEach(c => {
-                    const b = document.createElement('button');
-                    b.className = 'choice-btn';
-                    b.innerText = "> " + c.h;
-                    b.onclick = () => render(c.n);
-                    btnsDiv.appendChild(b);
-                });
-            }
-        }, 20);
-    }
-</script>
-</body>
-</html>
+            txtDiv.innerText = s.msg.substring(0,
