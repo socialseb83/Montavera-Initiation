@@ -19,7 +19,7 @@
 </head>
 <body>
 
-<audio id="bgm" loop src="Welcome to Mntavera.mp3"></audio>
+<audio id="bgm" loop src="welcome_to_montavera.mp3"></audio>
 <audio id="sfx" src="glitch_sound.mp3"></audio>
 
 <div id="game">
@@ -36,7 +36,8 @@
     const bgm = document.getElementById('bgm');
     const sfx = document.getElementById('sfx');
 
-    let audioStarted = false;
+    // Set initial volume
+    bgm.volume = 0.5;
 
     const story = {
         start: { img: 'print_2_play.png', msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards with surgical precision", n: 'watch' }, { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }] },
@@ -57,9 +58,9 @@
     };
 
     function render(k) {
-        if (!audioStarted) {
-            bgm.play().catch(e => console.log("Audio waiting for interaction"));
-            audioStarted = true;
+        // Trigger audio playback on the first interaction
+        if (bgm.paused) {
+            bgm.play().catch(e => console.log("Audio waiting for user click."));
         }
         
         if (k === 'exit') { window.location.href = DISCORD; return; }
