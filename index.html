@@ -6,105 +6,48 @@
     <title>FACTIONS: MONTAVERA</title>
     <style>
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --g: #00FF9F; --y: #FFD60A; }
+        
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
         
-        .full-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 5vh; background-size: contain; background-repeat: no-repeat; background-position: center top; }
-        .full-screen::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: blur(20px) brightness(0.2); z-index: -1; }
+        /* CRT Scanline Overlay */
+        body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 50; background-size: 100% 3px, 3px 100%; pointer-events: none; }
+
+        /* FULL SCREEN COVERS (Front & Back) */
+        .cover { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 6vh; background-size: contain; background-repeat: no-repeat; background-position: center top; }
+        
+        .cover::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: blur(20px) brightness(0.2); z-index: -1; }
 
         #splash { background-image: url('cover_1.png'); }
-        #splash::before { background-image: url('cover_1.png'); }
+        #splash::after { background-image: url('cover_1.png'); }
 
         #back-cover { display: none; background-image: url('back_cover_1.jpg'); z-index: 200; }
-        #back-cover::before { background-image: url('back_cover_1.jpg'); }
+        #back-cover::after { background-image: url('back_cover_1.jpg'); }
 
-        .cta-btn { position: relative; z-index: 999; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 8px 0; transition: 0.2s; }
-        .cta-btn:hover { background: var(--y); color: var(--b); }
+        /* CTA BUTTONS */
+        .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 8px 0; }
         
-        .hint { position: relative; z-index: 999; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; pointer-events: none; }
+        /* GAME BOX */
+        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
+        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; transition: background-image 0.5s ease; }
+        #txt { min-height: 100px; line-height: 1.4; margin-bottom: 20px; font-size: 14px; }
+        
+        .choice-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; font-size: 13px; }
+        .choice-btn:hover { background: rgba(123, 44, 191, 0.3); }
 
-        #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; }
-        #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
-        #txt { min-height: 120px; line-height: 1.4; white-space: pre-wrap; margin-bottom: 20px; }
-        .choice-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: transparent; border: 1px solid var(--p); color: var(--t); font-family: inherit; cursor: pointer; text-align: left; }
+        .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
     </style>
-    
-    <script>
-        const DISCORD = 'https://discord.gg/sHSN5ke62F';
-        let isBooted = false;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const bootBtn = document.getElementById('boot-btn');
-            const bgm = document.getElementById('bgm');
-
-            const startBoot = () => {
-                if (isBooted) return;
-                isBooted = true;
-                bgm.play().catch(() => {});
-                document.getElementById('splash').style.display = 'none';
-                document.getElementById('game').style.display = 'block';
-                render('start');
-            };
-
-            bootBtn.addEventListener('click', startBoot);
-            bootBtn.addEventListener('touchstart', startBoot);
-        });
-
-        const story = {
-            start: { img: 'print_2_play.png', msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck.", choices: [{ h: "Cut the cards", n: 'watch' }] },
-            watch: { img: 'watch_others_play.png', msg: "You watch the veterans move Agents like they're filing tax returns in a hurricane.", choices: [{ h: "Ask for a match", n: 'online' }] },
-            online: { img: 'play_online.png', msg: "Your first win! The MOJO flows.", choices: [{ h: "Enter Montavera", n: 'gates' }] },
-            gates: { img: 'entering_montavera.png', msg: "The walls fade. You are now a Citizen.", choices: [{ h: "Step into the fog", n: 'encounter' }] },
-            encounter: { img: 'start.png', msg: "Someone approaches. Face them.", choices: [{ h: "Step forward", n: 'boss' }] },
-            boss: { img: 'the_boss.png', msg: "CITIZEN. The match begins.", choices: [{ h: "Burn for MOJO", n: 'win' }] },
-            win: { img: 'the_turning_tide.png', msg: "SUCCESS. You survived.", choices: [{ h: "CLAIM VICTORY", n: 'ready' }] },
-            ready: { img: 'ready_for_more.png', msg: "Report to the Council.", choices: [{ h: "CLOSE COMIC", n: 'backcover' }] }
-        };
-
-        function render(k) {
-            const bgm = document.getElementById('bgm');
-            if (bgm.paused && k !== 'backcover') { bgm.play().catch(() => {}); }
-            
-            if (k === 'backcover') {
-                document.getElementById('game').style.display = 'none';
-                document.getElementById('back-cover').style.display = 'flex';
-                return;
-            }
-
-            const s = story[k];
-            const btns = document.getElementById('btns');
-            btns.innerHTML = '';
-            document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
-            
-            let i = 0;
-            const timer = setInterval(() => {
-                document.getElementById('txt').innerText = s.msg.substring(0, i);
-                i++;
-                if (i > s.msg.length) {
-                    clearInterval(timer);
-                    s.choices.forEach(c => {
-                        const b = document.createElement('button');
-                        b.className = 'choice-btn';
-                        b.innerText = `> ${c.h}`;
-                        b.onclick = () => render(c.n);
-                        btns.appendChild(b);
-                    });
-                }
-            }, 20);
-        }
-    </script>
 </head>
 <body>
 
-<div id="splash" class="full-screen">
+<div id="splash" class="cover">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
     <div class="hint">Check volume & silent switch</div>
 </div>
 
-<div id="back-cover" class="full-screen">
-    <button class="cta-btn" onclick="window.location.href=DISCORD">TILL NEXT TIME...</button>
-    <button class="cta-btn" onclick="window.location.href=DISCORD">OR LAST TIME...</button>
-    <div class="hint">Why don't monsters eat bureaucrats? Because they're hard to digest.</div>
-    <p style="font-size: 9px; color: #555; margin-top: 10px;">(Click either to report to the Council Rules)</p>
+<div id="back-cover" class="cover">
+    <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">TILL NEXT TIME...</button>
+    <button class="cta-btn" onclick="window.location.href='https://discord.gg/sHSN5ke62F'">OR LAST TIME...</button>
+    <div class="hint">Why don't monsters eat bureaucrats? They're hard to digest.</div>
 </div>
 
 <audio id="bgm" loop preload="auto">
@@ -117,5 +60,102 @@
     <div id="btns"></div>
 </div>
 
+<script>
+    const splash = document.getElementById('splash');
+    const game = document.getElementById('game');
+    const backCover = document.getElementById('back-cover');
+    const bgm = document.getElementById('bgm');
+    let isBooted = false;
+
+    // BOOT LOGIC
+    document.getElementById('boot-btn').addEventListener('click', startBoot);
+    document.getElementById('boot-btn').addEventListener('touchstart', startBoot);
+
+    function startBoot() {
+        if (isBooted) return;
+        isBooted = true;
+        bgm.play().catch(() => {});
+        splash.style.display = 'none';
+        game.style.display = 'block';
+        render('start');
+    }
+
+    const story = {
+        start: { 
+            img: 'print_2_play.png', 
+            msg: "It started in your bedroom. A printer, some heavy cardstock, and a dream of bureaucratic dominance. You've printed your first deck of Factions: Montavera.", 
+            choices: [
+                { h: "Cut the cards with surgical precision", n: 'watch' },
+                { h: "Tear them out (Chaotic Anomaly)", n: 'watch' }
+            ] 
+        },
+        watch: { 
+            img: 'watch_others_play.png', 
+            msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", 
+            choices: [{ h: "Ask for a practice match", n: 'online' }] 
+        },
+        online: { 
+            img: 'play_online.png', 
+            msg: "Your first online match. You win! The confidence feels like a gravitational shift.", 
+            choices: [{ h: "Venturing out into Montavera...", n: 'gates' }] 
+        },
+        gates: { 
+            img: 'entering_montavera.png', 
+            msg: "The bedroom walls fade. You stand before the city gates. You are no longer just a player. You are a Citizen.", 
+            choices: [{ h: "Step into the fog", n: 'encounter' }] 
+        },
+        encounter: { 
+            img: 'start.png', 
+            msg: "You are not ready. But that has never stopped anyone in Montavera. Face your opponent.", 
+            choices: [{ h: "Step forward", n: 'boss' }] 
+        },
+        boss: { 
+            img: 'the_boss.png', 
+            msg: "CITIZEN. You slam 'Annhialator Bae' onto the table. The match begins.", 
+            choices: [{ h: "Burn for MOJO (+5)", n: 'win' }] 
+        },
+        win: { 
+            img: 'the_turning_tide.png', 
+            msg: "SUCCESS. Your Plot Twist finds a loophole in reality. You have survived.", 
+            choices: [{ h: "CLAIM VICTORY", n: 'ready' }] 
+        },
+        ready: { 
+            img: 'ready_for_more.png', 
+            msg: "You're ready, Montavera! Report to the Council for your final credentials.", 
+            choices: [{ h: "CLOSE COMIC", n: 'backcover' }] 
+        }
+    };
+
+    function render(k) {
+        if (k === 'backcover') {
+            game.style.display = 'none';
+            backCover.style.display = 'flex';
+            return;
+        }
+
+        const s = story[k];
+        const btnsDiv = document.getElementById('btns');
+        const txtDiv = document.getElementById('txt');
+        
+        btnsDiv.innerHTML = '';
+        document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
+        
+        let i = 0;
+        const timer = setInterval(() => {
+            txtDiv.innerText = s.msg.substring(0, i);
+            i++;
+            if (i > s.msg.length) {
+                clearInterval(timer);
+                s.choices.forEach(c => {
+                    const b = document.createElement('button');
+                    b.className = 'choice-btn';
+                    b.innerText = `> ${c.h}`;
+                    b.onclick = () => render(c.n);
+                    btnsDiv.appendChild(b);
+                });
+            }
+        }, 20);
+    }
+</script>
 </body>
 </html>
