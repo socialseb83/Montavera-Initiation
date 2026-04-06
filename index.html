@@ -7,11 +7,17 @@
     <style>
         :root { --p: #7B2CBF; --b: #0D1B2A; --t: #E0E1DD; --y: #FFD60A; }
         body { background: var(--b); color: var(--t); font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative; touch-action: manipulation; }
+        
+        /* THE COVERS */
         .cover-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--b); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 8vh; background-repeat: no-repeat; background-position: center top; background-size: contain; }
+        
         #splash { background-image: url('1_cover_1.png'); display: flex; }
         #back-cover { background-image: url('18_back_cover_1.png'); display: none; z-index: 200; }
+
         .cta-btn { position: relative; z-index: 300; border: 3px solid var(--y); color: var(--y); text-align: center; width: 85%; max-width: 320px; background: rgba(0,0,0,0.9); font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 20px rgba(255, 214, 10, 0.4); cursor: pointer; padding: 18px; margin: 6px 0; }
         .hint { position: relative; z-index: 300; font-size: 10px; color: #fff; margin-top: 10px; font-style: italic; background: rgba(0,0,0,0.8); padding: 5px 12px; border-radius: 4px; }
+
+        /* THE GAME BOX */
         #game { width: 90%; max-width: 400px; border: 1px solid var(--p); padding: 20px; background: rgba(13, 27, 42, 0.95); display: none; position: relative; z-index: 20; box-shadow: 0 0 15px rgba(123, 44, 191, 0.3); }
         #art { width: 100%; height: 220px; background-size: cover; background-position: center; border: 1px solid var(--p); margin-bottom: 15px; background-color: #000; }
         #txt { min-height: 110px; line-height: 1.4; margin-bottom: 20px; font-size: 13px; }
@@ -42,54 +48,23 @@
 
 <script>
     const story = {
-        // Step 2: Printer
-        step2: { img: '2_print_2_play.png', msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck of Factions: Montavera.", choices: [{ h: "Cut the cards", n: 'step3' }, { h: "Tear them out", n: 'step3' }] },
-        
-        // Step 3: Watching
-        step3: { img: '3_watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", choices: [{ h: "Study the meta", n: 'step4' }, { h: "Learn the plays", n: 'step4' }] },
-        
-        // Step 4: Online Match
-        step4: { img: '4_play_online.png', msg: "Time to test your MOJO. You log in and challenge your first opponent. The digital battlefield glows.", choices: [{ h: "Commit to the play", n: 'step5' }, { h: "Ready your hand", n: 'step5' }] },
-        
-        // Step 5: Entering City
-        step5: { img: '5_entering_montavera.png', msg: "The bedroom walls fade. You head into the city of Montavera for a real opponent. The fog is thick.", choices: [{ h: "Enter the street", n: 'step6' }, { h: "Find a match", n: 'step6' }] },
-        
-        // Step 6: Old Man
-        step6: { img: '6_start.png', msg: "In the heart of the fog, you encounter your first real enemy. A creepy old man with a hungry grin.", choices: [{ h: "Sit at the table", n: 'step7' }, { h: "Challenge him", n: 'step7' }] },
-        
-        // Step 7: Enforcer
-        step7: { img: '7_the_enforcer.png', msg: "He doesn't waste time. He summons a Shadow Enforcer! The air in the street turns ice cold.", choices: [{ h: "Steady your nerves", n: 'step8' }, { h: "Grip your cards", n: 'step8' }] },
-        
-        // Step 8: Deal
-        step8: { img: '8_the_corrupt_deal.png', msg: "He sneers. 'A deal? Hand over your deck, and I'll let you walk away.'", choices: [{ h: "Refuse the bribe", n: 'step9' }, { h: "Declare war", n: 'step9' }] },
-        
-        // Step 9: Boss / Bae
-        step9: { img: '9_the_boss.png', msg: "You summon 'Annihilator Bae'! She glows with a fierce, defiant light. The counter-attack begins.", choices: [{ h: "Ready combat stance", n: 'step10' }, { h: "Analyze the field", n: 'step10' }] },
-        
-        // Step 10: Dice
-        step10: { img: '10_initiative.png', msg: "The golden dice tumble across the cobbles. You need a high roll to take the lead.", choices: [{ h: "Watch the dice land", n: 'step11' }, { h: "Hope for a crit", n: 'step11' }] },
-        
-        // Step 11: Near Loss
-        step11: { img: '11_the_near_loss.png', msg: "Disaster! The old man wins the roll. His monster lunges, dealing a devastating blow.", choices: [{ h: "Gasp in horror", n: 'step12' }, { h: "Search for hope...", n: 'step12' }] },
-        
-        // Step 12: Tide
-        step12: { img: '12_the_turning_tide.png', msg: "But the game isn't over. You play 'The Turning Tide'! The battlefield shifts in your favor.", choices: [{ h: "Seize the moment", n: 'step13' }, { h: "Press the advantage", n: 'step13' }] },
-        
-        // Step 13: Failed Block
-        step13: { img: '13_failed_block.png', msg: "Enraged, the old man orders his monster to attack YOU directly! You command your agent to block.", choices: [{ h: "Hold the line!", n: 'step13_fail' }, { h: "Brace for impact", n: 'step13_fail' }] },
-        step13_fail: { img: '13_failed_block.png', msg: "FAIL! Your agent is a striker, not a blocker. The hit lands. You're bleeding MOJO.", choices: [{ h: "Find an answer", n: 'step14' }, { h: "One last trick...", n: 'step14' }] },
-        
-        // Step 14: Burn
-        step14: { img: '14_burn.png', msg: "You realize the weakened 'Bae' is better used as fuel. You burn her card for a massive MOJO surge!", choices: [{ h: "Channel the energy", n: 'step15' }, { h: "Pay the price", n: 'step15' }] },
-        
-        // Step 15: Bribe
-        step15: { img: '15_the_bribe.png', msg: "You use the MOJO to bribe his Enforcer! You slide a green sack of power across the table.", choices: [{ h: "Buy his loyalty", n: 'step16' }, { h: "Turn the tables", n: 'step16' }] },
-        
-        // Step 16: Plot Twist
-        step16: { img: '16_plot_twist.png', msg: "With the Enforcer distracted, you activate your Plot Twist! The contract is shredded!", choices: [{ h: "DECLARE VICTORY", n: 'step17' }, { h: "CLAIM THE WIN", n: 'step17' }] },
-        
-        // Step 17: Window Yell
-        step17: { img: '17_ready_for_more.png', msg: "Back in your bedroom, you yell out the window: 'I'M READY, MONTAVERA! LET'S DO THIS!'", choices: [{ h: "CLOSE COMIC", n: 'backcover' }] }
+        s2: { img: '2_print_2_play.png', msg: "It started in your bedroom. A printer, cardstock, and a dream. You've printed your first deck.", choices: [{ h: "Cut the cards", n: 's3' }, { h: "Tear them out", n: 's3' }] },
+        s3: { img: '3_watch_others_play.png', msg: "You jump onto the Discord. You watch the veterans move Agents like they're filing tax returns in a hurricane.", choices: [{ h: "Study the meta", n: 's4' }, { h: "Learn the plays", n: 's4' }] },
+        s4: { img: '4_play_online.png', msg: "Time to test your MOJO. You log in and challenge your first opponent. The digital battlefield glows.", choices: [{ h: "Commit to the play", n: 's5' }, { h: "Ready your hand", n: 's5' }] },
+        s5: { img: '5_entering_montavera.png', msg: "The bedroom walls fade. You head into the city of Montavera for a real opponent. The fog is thick.", choices: [{ h: "Enter the street", n: 's6' }, { h: "Find a match", n: 's6' }] },
+        s6: { img: '6_start.png', msg: "In the heart of the fog, you encounter your first real enemy. A creepy old man with a hungry grin.", choices: [{ h: "Sit at the table", n: 's7' }, { h: "Challenge him", n: 's7' }] },
+        s7: { img: '7_the_enforcer.png', msg: "He doesn't waste time. He summons a Shadow Enforcer! The air in the street turns ice cold.", choices: [{ h: "Steady your nerves", n: 's8' }, { h: "Grip your cards", n: 's8' }] },
+        s8: { img: '8_the_corrupt_deal.png', msg: "He sneers. 'A deal? Hand over your deck, and I'll let you walk away.'", choices: [{ h: "Refuse the bribe", n: 's9' }, { h: "Declare war", n: 's9' }] },
+        s9: { img: '9_the_boss.png', msg: "You summon 'Annihilator Bae'! She glows with a fierce, defiant light.", choices: [{ h: "Ready combat stance", n: 's10' }, { h: "Analyze the field", n: 's10' }] },
+        s10: { img: '10_initiative.png', msg: "The golden dice tumble across the cobbles. You need a high roll.", choices: [{ h: "Watch the dice land", n: 's11' }, { h: "Hope for a crit", n: 's11' }] },
+        s11: { img: '11_the_near_loss.png', msg: "Disaster! The old man wins the roll. His monster lunges, dealing a blow to Bae.", choices: [{ h: "Gasp in horror", n: 's12' }, { h: "Search for hope...", n: 's12' }] },
+        s12: { img: '12_the_turning_tide.png', msg: "But the game isn't over. You play 'The Turning Tide'! The field shifts.", choices: [{ h: "Seize the moment", n: 's13' }, { h: "Press the advantage", n: 's13' }] },
+        s13: { img: '13_failed_block.png', msg: "Enraged, he orders his monster to attack YOU directly! Command your agent to block.", choices: [{ h: "Hold the line!", n: 's13f' }, { h: "Brace for impact", n: 's13f' }] },
+        s13f: { img: '13_failed_block.png', msg: "FAIL! Your agent is a striker, not a blocker. You're bleeding MOJO.", choices: [{ h: "Find an answer", n: 's14' }, { h: "One last trick...", n: 's14' }] },
+        s14: { img: '14_burn.png', msg: "You burn 'Bae' for a massive MOJO surge! The energy is overwhelming.", choices: [{ h: "Channel energy", n: 's15' }, { h: "Pay the price", n: 's15' }] },
+        s15: { img: '15_the_bribe.png', msg: "You use the MOJO to bribe his Enforcer! You slide a green sack of power across.", choices: [{ h: "Buy his loyalty", n: 's16' }, { h: "Turn the tables", n: 's16' }] },
+        s16: { img: '16_plot_twist.png', msg: "With the Enforcer distracted, you activate your Plot Twist! The contract is shredded!", choices: [{ h: "VICTORY!", n: 's17' }, { h: "GAME OVER", n: 's17' }] },
+        s17: { img: '17_ready_for_more.png', msg: "Back home, you yell out the window: 'I'M READY, MONTAVERA!'", choices: [{ h: "CLOSE COMIC", n: 'backcover' }] }
     };
 
     let isBooted = false;
@@ -99,7 +74,7 @@
         document.getElementById('bgm').play().catch(() => {});
         document.getElementById('splash').style.display = 'none';
         document.getElementById('game').style.display = 'block';
-        render('step2'); // Hard-coded to Step 2 after cover
+        render('s2'); 
     }
 
     document.getElementById('boot-btn').addEventListener('click', startBoot);
@@ -115,7 +90,10 @@
         const btnsDiv = document.getElementById('btns');
         const txtDiv = document.getElementById('txt');
         btnsDiv.innerHTML = '';
-        document.getElementById('art').style.backgroundImage = `url('${s.img}')`;
+        
+        // Pure image loading
+        document.getElementById('art').style.backgroundImage = "url('" + s.img + "')";
+        
         let i = 0;
         const timer = setInterval(() => {
             txtDiv.innerText = s.msg.substring(0, i);
@@ -125,7 +103,7 @@
                 s.choices.forEach(c => {
                     const b = document.createElement('button');
                     b.className = 'choice-btn';
-                    b.innerText = `> ${c.h}`;
+                    b.innerText = "> " + c.h;
                     b.onclick = () => render(c.n);
                     btnsDiv.appendChild(b);
                 });
