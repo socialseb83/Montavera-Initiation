@@ -16,123 +16,198 @@
             background-color: var(--void-black);
             color: var(--bureau-beige);
             font-family: 'Courier New', Courier, monospace;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0; overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
         }
 
-        /* CRT EFFECT */
+        /* CRT Scanline / Anomaly Effect */
         body::before {
-            content: " "; display: block; position: absolute;
+            content: " ";
+            display: block;
+            position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10; background-size: 100% 2px, 3px 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
         }
 
         #game-container {
-            width: 90%; max-width: 500px; border: 2px solid var(--neon-purple);
-            padding: 20px; background: rgba(13, 27, 42, 0.95);
-            box-shadow: 0 0 20px var(--neon-purple); position: relative; z-index: 5;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid var(--neon-purple);
+            padding: 20px;
+            background: rgba(13, 27, 42, 0.95);
+            box-shadow: 0 0 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            z-index: 5;
         }
 
-        .art-header {
-            width: 100%; height: 250px; background-size: cover; background-position: center;
-            border: 1px solid var(--neon-purple); margin-bottom: 15px; border-radius: 8px;
+        #art-box {
+            width: 100%;
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--neon-purple);
+            margin-bottom: 15px;
+            background-color: #000;
         }
 
-        #stats { margin-bottom: 10px; font-size: 0.9em; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        #mojo-counter { color: var(--mojo-green); text-shadow: 0 0 5px var(--mojo-green); }
+        #stats-bar {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(224, 225, 221, 0.2);
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-        #terminal-text { min-height: 80px; line-height: 1.4; margin-bottom: 20px; }
+        #terminal-text {
+            min-height: 120px;
+            line-height: 1.4;
+            /* FIX FOR THE SPACING BUG */
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+            margin-bottom: 20px;
+        }
 
         .btn {
-            display: block; width: 100%; padding: 12px; margin: 8px 0;
-            background: transparent; border: 1px solid var(--neon-purple);
-            color: var(--bureau-beige); cursor: pointer; text-align: left;
-            font-family: inherit; transition: 0.2s;
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: transparent;
+            border: 1px solid var(--neon-purple);
+            color: var(--bureau-beige);
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
         }
 
-        .btn:hover { background: var(--neon-purple); color: white; transform: translateX(5px); }
+        .btn:hover {
+            background: rgba(123, 44, 191, 0.2);
+            border-color: var(--bureau-beige);
+        }
+
+        #mojo-val { color: var(--mojo-green); text-shadow: 0 0 5px var(--mojo-green); }
+
         .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(2px, -2px); } }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <div id="art" class="art-header" style="background-image: url('PASTE_YOUR_IMAGE_LINK_HERE');"></div>
-    
-    <div id="stats">MOJO: <span id="mojo-counter">0</span> | INCIDENT REPORT: #<span id="report-id">2026-01</span></div>
-    
-    <div id="terminal-text">Initializing record...</div>
+    <div id="art-box"></div>
+    <div id="stats-bar">
+        <span>MOJO: <span id="mojo-val">0</span></span>
+        <span>INCIDENT: #2026-04-05</span>
+    </div>
+    <div id="terminal-text"></div>
     <div id="options-zone"></div>
 </div>
 
 <script>
+    // --- CONFIGURATION ---
+    // Change 'image.png' to the exact name of the file in your GitHub folder
+    const MY_IMAGE_NAME = 'image.png'; 
+    const DISCORD_LINK = 'YOUR_DISCORD_RULES_LINK';
+
     let mojo = 0;
     const terminal = document.getElementById('terminal-text');
     const options = document.getElementById('options-zone');
-    const art = document.getElementById('art');
+    const artBox = document.getElementById('art-box');
 
-    const scenes = {
+    // Set Initial Image
+    artBox.style.backgroundImage = `url('${MY_IMAGE_NAME}')`;
+
+    const story = {
         start: {
-            text: "CITIZEN. Your presence has been registered as a minor statistical anomaly. You have 0 MOJO and a vacant Seat. The Collector is moving to redact you. What is your play?",
-            choices: [{ text: "Burn 'Annihilator Bae' for 5 MOJO", next: 'burn' }]
+            text: "CITIZEN. Your presence has been registered. You are currently standing in a gravitational anomaly with 0 MOJO. This is a violation of local reality ordinances.\n\nThe Collector is approaching. He doesn't want your soul—he wants your Seat. What is your opening move?",
+            choices: [
+                { text: "Burn 'Annihilator Bae' for 5 MOJO", next: 'burn' }
+            ]
         },
         burn: {
-            text: "Excellent. Bae has been converted into raw paperwork and energy. You feel significantly more liquid. Now, The Collector's Agent is blocking your path. Buy his loyalty.",
-            action: () => { mojo = 5; updateStats(); art.classList.add('glitch'); setTimeout(()=>art.classList.remove('glitch'), 500); },
-            choices: [{ text: "Bribe the Agent (3 MOJO)", next: 'bribe' }]
+            text: "RESOURCES ACQUIRED. You have sacrificed potential for power. \n\nThe Collector deploys 'The Enforcer' to your Frontline. He's blocking your path to victory. He looks like he enjoys paperwork and violence in equal measure.",
+            action: () => { updateMojo(5); },
+            choices: [
+                { text: "Bribe The Enforcer (Cost: 3 MOJO)", next: 'bribe' }
+            ]
         },
         bribe: {
-            text: "Loyalty in Montavera is simply a matter of budget. The Agent has switched sides. The Anomaly is shifting. Roll for Combat Initiative.",
-            action: () => { mojo -= 3; updateStats(); },
-            choices: [{ text: "[ROLL INITIATIVE]", next: 'combat' }]
+            text: "TRANSACTION COMPLETE. The Enforcer has realized his loyalty is flexible. He is now your Agent.\n\nGravity is shifting. It's time to see who strikes first. Roll for Initiative.",
+            action: () => { updateMojo(-3); },
+            choices: [
+                { text: "[ROLL INITIATIVE D6]", next: 'combat' }
+            ]
         },
         combat: {
-            text: "You rolled a 6. The Collector rolled a 1. Reality is failing him. He attempts a counter-move, but you have the final word. Play the Plot Twist.",
-            action: () => { document.getElementById('report-id').innerText = 'CRITICAL'; },
-            choices: [{ text: "Plot Twist: 'Bureaucratic Error'", next: 'win' }]
+            text: "CRITICAL SUCCESS. You rolled a 6. The Collector rolled a 1. He is stunned by your administrative efficiency.\n\nHe attempts to Redact your Agent! Quick—counter it.",
+            action: () => { document.body.classList.add('glitch'); setTimeout(()=>document.body.classList.remove('glitch'), 500); },
+            choices: [
+                { text: "Play Plot Twist: 'Bureaucratic Error'", next: 'win' }
+            ]
         },
         win: {
-            text: "PLOT TWIST: You've successfully filed a Form 22-B. The Collector’s turn is cancelled and his assets are seized. The Seat is vacant. Claim it and sign the registry.",
-            choices: [{ text: "CLAIM SEAT & SIGN REGISTRY", next: 'exit' }]
+            text: "ERROR 404: ENEMY NOT FOUND. Your Plot Twist has invalidated The Collector's existence. The Seat is vacant.\n\nYou have survived the initiation. Report to the High Council for your final briefing.",
+            choices: [
+                { text: "CLAIM SEAT & ENTER DISCORD", next: 'exit' }
+            ]
         }
     };
 
-    function renderScene(key) {
-        if (key === 'exit') {
-            // STEP 2: PASTE YOUR DISCORD LINK BELOW
-            window.location.href = "PASTE_YOUR_DISCORD_LINK_HERE";
-            return;
-        }
-        const scene = scenes[key];
+    function typeWriter(text, callback) {
         terminal.innerText = '';
         let i = 0;
-        function type() {
-            if (i < scene.text.length) {
-                terminal.innerText += scene.text.charAt(i);
-                i++;
-                setTimeout(type, 25);
-            } else { showChoices(scene.choices); }
-        }
-        if (scene.action) scene.action();
-        type();
+        const interval = setInterval(() => {
+            terminal.innerText += text.charAt(i);
+            i++;
+            if (i >= text.length) {
+                clearInterval(interval);
+                callback();
+            }
+        }, 25);
     }
 
-    function showChoices(choices) {
+    function renderScene(key) {
+        if (key === 'exit') {
+            window.location.href = DISCORD_LINK;
+            return;
+        }
+        const scene = story[key];
         options.innerHTML = '';
-        choices.forEach(c => {
-            const b = document.createElement('button');
-            b.className = 'btn';
-            b.innerText = `> ${c.text}`;
-            b.onclick = () => renderScene(c.next);
-            options.appendChild(b);
+        
+        if (scene.action) scene.action();
+        
+        typeWriter(scene.text, () => {
+            scene.choices.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'btn';
+                b.innerText = `> ${c.text}`;
+                b.onclick = () => renderScene(c.next);
+                options.appendChild(b);
+            });
         });
     }
 
-    function updateStats() { document.getElementById('mojo-counter').innerText = mojo; }
+    function updateMojo(amt) {
+        mojo += amt;
+        document.getElementById('mojo-val').innerText = mojo;
+    }
 
+    // Initialize
     renderScene('start');
 </script>
 </body>
