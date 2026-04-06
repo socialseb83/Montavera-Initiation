@@ -25,7 +25,7 @@
 
 <div id="splash" class="cover-page">
     <button id="boot-btn" class="cta-btn">AUTHORIZE ACCESS</button>
-    <div class="hint">Check volume. Handshake protocol active.</div>
+    <div class="hint">Check volume/silent switch. Protocol: MONTAVERA.</div>
 </div>
 
 <div id="back-cover" class="cover-page">
@@ -33,7 +33,7 @@
     <div class="hint">Rules channel protocol active.</div>
 </div>
 
-<audio id="bgm" loop preload="auto">
+<audio id="bgm" loop preload="auto" playsinline>
     <source src="welcome_to_montavera.mp3" type="audio/mpeg">
 </audio>
 
@@ -58,7 +58,7 @@
         step12: { img: '12_the_turning_tide.png', msg: "But the game isn't over. You play 'The Turning Tide'! The battlefield shifts in your favor.", choices: [{ h: "Seize the moment", n: 'step13' }, { h: "Press the advantage", n: 'step13' }] },
         step13: { img: '13_failed_block.png', msg: "Enraged, he orders his monster to attack YOU directly! Command your agent to block.", choices: [{ h: "Hold the line!", n: 'step13f' }, { h: "Brace for impact", n: 'step13f' }] },
         step13f: { img: '13_failed_block.png', msg: "FAIL! Your agent is a striker, not a blocker. The hit lands. You're bleeding MOJO.", choices: [{ h: "Find an answer", n: 'step14' }, { h: "One last trick...", n: 'step14' }] },
-        step14: { img: '14_burn.png', msg: "You sacrifice 'Bae' to the fire. You burn her card for a massive MOJO surge!", choices: [{ h: "Channel energy", n: 'step15' }, { h: "Pay the price", n: 'step15' }] },
+        step14: { img: '14_burn.png', msg: "You realize the weakened 'Bae' is better used as fuel. You burn her card for a massive MOJO surge!", choices: [{ h: "Channel the energy", n: 'step15' }, { h: "Pay the price", n: 'step15' }] },
         step15: { img: '15_the_bribe.png', msg: "You use the MOJO to bribe his Enforcer! You slide a green sack of power across the table.", choices: [{ h: "Buy his loyalty", n: 'step16' }, { h: "Turn the tables", n: 'step16' }] },
         step16: { img: '16_plot_twist.png', msg: "With the Enforcer distracted, you activate your Plot Twist! The contract is shredded!", choices: [{ h: "VICTORY!", n: 'step17' }, { h: "GAME OVER", n: 'step17' }] },
         step17: { img: '17_ready_for_more.png', msg: "Back home, you yell out the window: 'I'M READY, MONTAVERA! LET'S DO THIS!'", choices: [{ h: "CLOSE COMIC", n: 'backcover' }] }
@@ -71,9 +71,16 @@
         if (isBooted) return;
         isBooted = true;
         
-        // Forced immediate audio play for iOS
-        audio.play().catch(e => {
-            console.log("Audio failed to play", e);
+        // METHOD 1: Direct Play
+        audio.play().then(() => {
+            console.log("Audio playing perfectly.");
+        }).catch(e => {
+            // METHOD 2: iOS Volume Unlock
+            audio.muted = true;
+            audio.play().then(() => {
+                audio.muted = false;
+            });
+            console.log("Audio needed a volume handshake.");
         });
 
         document.getElementById('splash').style.display = 'none';
@@ -81,9 +88,10 @@
         render('step2'); 
     }
 
-    // Touchstart is vital for iPhone to trigger sound
-    document.getElementById('boot-btn').addEventListener('click', startBoot);
-    document.getElementById('boot-btn').addEventListener('touchstart', startBoot);
+    // METHOD 3: Listen for both Click and Touch to capture iPhone taps
+    const btn = document.getElementById('boot-btn');
+    btn.addEventListener('click', startBoot);
+    btn.addEventListener('touchstart', startBoot, {passive: true});
 
     function render(k) {
         if (k === 'backcover') {
